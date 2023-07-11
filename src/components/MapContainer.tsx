@@ -1,5 +1,5 @@
-import { MapContainer, TileLayer, Marker, Popup, ImageOverlay } from 'react-leaflet';
-import { LatLng, LatLngBounds, LatLngExpression} from 'leaflet';
+import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
+import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
 import { MineralIcon, PlantIcon, AquaticIcon } from './Icons';
 import mapFld001 from '../assets/maps/UI_MapFld001.png';
@@ -7,6 +7,7 @@ import fld001_W_PU from '../assets/data/fld/fld001/fld001_W_PU_output.json';
 import fld001_E_PU from '../assets/data/fld/fld001/fld001_E_PU_output.json';
 import fld001_S_PU from '../assets/data/fld/fld001/fld001_S_PU_output.json';
 import fld001_N_PU from '../assets/data/fld/fld001/fld001_N_PU_output.json';
+import fld001_META from '../assets/data/fld/fld001/meta.json';
 // import icon from 'leaflet/dist/images/marker-icon.png';
 // import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 
@@ -27,16 +28,7 @@ export const MyMapContainer = () => {
         new LatLng(0, 0),
         mapSize,
     );
-    const fld001Meta = {
-        CapturePosition: {
-          X: -181334.0,
-          Y: -150000.0
-        },
-        CaptureSize: {
-          X: 266666.0,
-          Y: 150000.0
-        },
-    }
+    const fld001Meta = fld001_META;
     const GPList = [...fld001_W_PU, ...fld001_E_PU, ...fld001_N_PU, ...fld001_S_PU];
     const markers = GPList.map((entry) => {
         const worldX = entry.RelativeLocation.X;
@@ -52,23 +44,18 @@ export const MyMapContainer = () => {
         }
         return (<Marker position={position} icon={icon} key={entry.GatherPointKey}>
               <Popup>
-                哈哈😄 <br /> 啥也没有！<br /> <div style={{fontSize:5}}>大妈：没带还是没写？！</div>
+                哈哈😄 <br /> 啥也没有！啥也没有！啥也没有！啥也没有！<br /> <div style={{fontSize:5}}>大妈：没带还是没写？！</div>
               </Popup>
             </Marker>)
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
-    return (<MapContainer center={center} zoom={2} scrollWheelZoom={true} crs={L.CRS.Simple}>
+    return (<MapContainer center={center} zoom={3} minZoom={2} maxZoom={6} scrollWheelZoom={true} crs={L.CRS.Simple}>
     <ImageOverlay
       attribution='&copy;BANDAI NAMCO Online Inc. &copy; BANDAI NAMCO Studios Inc.'
       url={mapFld001}
       bounds={bounds}
     />
     {markers}
-    {/* <Marker position={position}>
-      <Popup>
-        Three pretty CSS3 popup. <br /> Easily customizable.
-      </Popup>
-    </Marker> */}
   </MapContainer>);
 }

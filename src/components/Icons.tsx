@@ -3,7 +3,7 @@ import MineralIconImg from '../assets/icons/gather/UI_IconGatherMineral.png';
 import PlantIconImg from '../assets/icons/gather/UI_IconGatherPlant.png';
 import AquaticIconImg from '../assets/icons/gather/UI_IconGatherAquatic.png';
 
-const ICON_SIZE = 24;
+const ICON_SIZE = 36;
 
 export const MineralIcon = L.icon({
     iconUrl: MineralIconImg,
