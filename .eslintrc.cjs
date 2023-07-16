@@ -7,10 +7,22 @@ module.exports = {
   ],
   plugins: ['@typescript-eslint'],
   parser: '@typescript-eslint/parser',
-  ignorePatterns: [".eslintrc.cjs", "**/node_modules/*.js"],
+  ignorePatterns: [
+    ".eslintrc.cjs",
+    "tailwind.config.js",
+    'webpack.config.js',
+    'postcss.config.js',
+    "**/node_modules/*.js"
+  ],
   parserOptions: {
     project: true,
     tsconfigRootDir: __dirname,
+  },
+  rules: {
+    indent: ['error', 4, {
+      'SwitchCase': 1,
+      'offsetTernaryExpressions': true
+    }]
   },
   root: true,
 };
