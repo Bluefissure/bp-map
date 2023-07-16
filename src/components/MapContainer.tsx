@@ -2,22 +2,9 @@ import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
 import { MineralIcon, PlantIcon, AquaticIcon, MineralGIcon, PlantGIcon, AquaticGIcon } from './Icons';
-import mapFld001 from '../assets/map/UI_MapFld001.png';
+import mapFld001 from '../assets/map/UI_MapFld001.webp';
 import gatherPoints from '../assets/data/fld001/GatherPoints.json';
 import bgConfig from '../assets/data/bgconfig.json';
-// import icon from 'leaflet/dist/images/marker-icon.png';
-// import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-
-// let DefaultIcon = L.icon({
-//     iconUrl: icon,
-//     iconSize: [24,36],
-//     iconAnchor: [12,36],
-//     popupAnchor: [0, -36],
-//     shadowUrl: iconShadow
-// });
-
-// L.Marker.prototype.options.icon = DefaultIcon;
 
 export const MyMapContainer = () => {
     const mapSize = new LatLng(216, 380);

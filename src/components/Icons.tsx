@@ -1,10 +1,10 @@
 import * as L from 'leaflet';
-import MineralIconImg from '../assets/icon/Gather/UI_IconGatherMineral.png';
-import PlantIconImg from '../assets/icon/Gather/UI_IconGatherPlant.png';
-import AquaticIconImg from '../assets/icon/Gather/UI_IconGatherAquatic.png';
-import MineralGIconImg from '../assets/icon/Gather/UI_IconGatherMineral_G.png';
-import PlantGIconImg from '../assets/icon/Gather/UI_IconGatherPlant_G.png';
-import AquaticGIconImg from '../assets/icon/Gather/UI_IconGatherAquatic_G.png';
+import MineralIconImg from '../assets/icon/Gather/UI_IconGatherMineral.webp';
+import PlantIconImg from '../assets/icon/Gather/UI_IconGatherPlant.webp';
+import AquaticIconImg from '../assets/icon/Gather/UI_IconGatherAquatic.webp';
+import MineralGIconImg from '../assets/icon/Gather/UI_IconGatherMineral_G.webp';
+import PlantGIconImg from '../assets/icon/Gather/UI_IconGatherPlant_G.webp';
+import AquaticGIconImg from '../assets/icon/Gather/UI_IconGatherAquatic_G.webp';
 
 const ICON_SIZE = 36;
 
