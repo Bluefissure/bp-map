@@ -30,8 +30,7 @@ module.exports = {
         test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
         type: 'javascript/auto',
         use: [
-          'file-loader',
-          'webp-loader'
+          'file-loader'
         ].map((loader) => ({
           loader,
           options: {
