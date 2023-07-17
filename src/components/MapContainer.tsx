@@ -76,21 +76,24 @@ export const MyMapContainer = () => {
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
-    return (<MapContainer
-        center={center}
-        zoom={3}
-        minZoom={2}
-        maxZoom={6}
-        scrollWheelZoom={true}
-        crs={L.CRS.Simple}
-        bounds={bounds}
-        maxBounds={maxBounds}
-    >
-        <ImageOverlay
-            attribution='&copy;BANDAI NAMCO Online Inc. &copy; BANDAI NAMCO Studios Inc.'
-            url={zoneMetaMap[zoneId].bgFile}
+    return (
+        <MapContainer
+            className='z-0'
+            center={center}
+            zoom={3}
+            minZoom={2}
+            maxZoom={6}
+            scrollWheelZoom={true}
+            crs={L.CRS.Simple}
             bounds={bounds}
-        />
-        {markers}
-    </MapContainer>);
+            maxBounds={maxBounds}
+        >
+            <ImageOverlay
+                attribution='&copy;BANDAI NAMCO Online Inc. &copy; BANDAI NAMCO Studios Inc.'
+                url={zoneMetaMap[zoneId].bgFile}
+                bounds={bounds}
+            />
+            {markers}
+        </MapContainer>
+    );
 }
