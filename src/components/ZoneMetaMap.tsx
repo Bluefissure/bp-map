@@ -1,5 +1,5 @@
 
-import mapFld001 from '../assets/map/fld001/UI_MapFld001.webp';
+import mapFld001 from '../assets/map/Fld001/UI_MapFld001.webp';
 import mapFld002 from '../assets/map/fld002/UI_MapFld002.webp';
 import mapFld003 from '../assets/map/fld003/UI_Map_Fld003.webp';
 import mapFld004 from '../assets/map/fld004/UI_Map_Fld004.webp';
