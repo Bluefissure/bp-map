@@ -3,7 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './style.css';
 import './index.css';
 import App from './App';
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <App />,
+    },
+]);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -11,7 +22,8 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <App />
+        {/* <App /> */}
+        <RouterProvider router={router} />
     </React.StrictMode>
 );
 
