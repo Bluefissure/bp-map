@@ -50,7 +50,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
 
     const {drawerOpen, setDrawerOpen, setZoneId} = props;
 
-    const drawerWidth = '20%';
+    const drawerWidth = '500px';
     const theme = useTheme();
 
     const DrawerHeader = styled('div')(({ theme }) => ({
