@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
@@ -8,11 +9,19 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { ZoneConfig } from '../types/ZoneConfig';
 import bgConfigJson from '../assets/data/bgconfig.json';
 
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import { MapDrawer } from './MapDrawer';
+
+
+
 export const MyMapContainer = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const zoneIdParam = searchParams.get('zone_id');
     const [zoneId, setZoneId] = useState(zoneIdParam ?? 'fld001');
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -76,24 +85,54 @@ export const MyMapContainer = () => {
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
+    
+    const handleDrawerOpen = () => {
+        setDrawerOpen(true);
+    };
     return (
-        <MapContainer
-            className='z-0'
-            center={center}
-            zoom={3}
-            minZoom={2}
-            maxZoom={6}
-            scrollWheelZoom={true}
-            crs={L.CRS.Simple}
-            bounds={bounds}
-            maxBounds={maxBounds}
-        >
-            <ImageOverlay
-                attribution='&copy;BANDAI NAMCO Online Inc. &copy; BANDAI NAMCO Studios Inc.'
-                url={zoneMetaMap[zoneId].bgFile}
+        <Box>
+            <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                // edge="end"
+                onClick={handleDrawerOpen}
+                sx={{ 
+                    ...(drawerOpen && { display: 'none' }),
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    padding: '10px',
+                    zIndex: '400',
+                    background: 'white',
+                }}
+            >
+                <MenuIcon />
+            </IconButton>
+            <MapContainer
+                className='z-0'
+                center={center}
+                zoom={3}
+                minZoom={2}
+                maxZoom={6}
+                scrollWheelZoom={true}
+                crs={L.CRS.Simple}
                 bounds={bounds}
+                maxBounds={maxBounds}
+            >
+                <ImageOverlay
+                    attribution='&copy;BANDAI NAMCO Online Inc. &copy; BANDAI NAMCO Studios Inc.'
+                    url={zoneMetaMap[zoneId].bgFile}
+                    bounds={bounds}
+                />
+                {markers}
+            </MapContainer>
+
+            <MapDrawer
+                drawerOpen={drawerOpen}
+                setDrawerOpen={(value: boolean) => {setDrawerOpen(value)}}
+                setZoneId={(zId: string) => {setZoneId(zId)}}
             />
-            {markers}
-        </MapContainer>
+            
+        </Box>
     );
 }
