@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
-import { MineralIcon, PlantIcon, AquaticIcon, MineralGIcon, PlantGIcon, AquaticGIcon } from './Icons';
+import { MineralIcon, PlantIcon, AquaticIcon, MineralGIcon, PlantGIcon, AquaticGIcon, TreasureIcon } from './Icons';
 import { zoneMetaMap } from './ZoneMetaMap';
 import { ZoneConfig } from '../types/ZoneConfig';
 import bgConfigJson from '../assets/data/bgconfig.json';
@@ -42,11 +42,13 @@ export const MyMapContainer = () => {
     );
     const zoneTopKey = zoneMetaMap[zoneId].topFileKey;
     const gatherPoints = zoneMetaMap[zoneId].gatherPoints;
+    const treasureBoxes = zoneMetaMap[zoneId].treasureBoxes;
     const bgConfig: {
         [key: string]: ZoneConfig
     } = bgConfigJson;
     const zoneConfig = bgConfig[zoneTopKey];
-    const markers = gatherPoints.map((gp) => {
+    
+    const gpMarkers = gatherPoints.map((gp) => {
         const worldX = gp.RelativeLocation.X;
         const worldY = gp.RelativeLocation.Y;
         const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
@@ -76,12 +78,47 @@ export const MyMapContainer = () => {
                         {`${Math.floor(item.rate / 100)}%`}
                     </div>
                 </div>));
-        return (<Marker position={position} icon={icon} key={gp.GatherPointKey}>
-            <Popup className='w-auto max-w-6xl'>
-                <div className='font-extrabold mb-2'>{gatherType}</div>
-                {treasures}
-            </Popup>
-        </Marker>)
+        return (
+            <Marker position={position} icon={icon} key={gp.GatherPointKey}>
+                <Popup className='w-auto max-w-6xl'>
+                    <div className='font-extrabold mb-2'>{gatherType}</div>
+                    {treasures}
+                </Popup>
+            </Marker>
+        );
+    })
+
+    const trMarkers = treasureBoxes?.map((tr) => {
+        const worldX = tr.RelativeLocation.X;
+        const worldY = tr.RelativeLocation.Y;
+        const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
+        const mapLng = (worldX - zoneConfig.CapturePosition.X) / zoneConfig.CaptureSize.X * mapSize.lng;
+        const position = new LatLng(mapLat, mapLng);
+        const gatherType = 'Treasure Box';
+        // const onlyOneTrasure = (tr.Data.lot_rate.length === 1) && (tr.Data.lot_rate[0].rate === 10000);
+        const icon = TreasureIcon;
+        const treasures = tr.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
+            (item, idx) => (
+                <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
+                    <div >
+                        {item.text.ja_JP}
+                    </div>
+                    <div className="space-x-4">
+                        <span> </span>
+                        <span> </span>
+                    </div>
+                    <div >
+                        {`${Math.floor(item.rate / 100)}%`}
+                    </div>
+                </div>));
+        return (
+            <Marker position={position} icon={icon} key={tr.TreasureBoxKey}>
+                <Popup className='w-auto max-w-6xl'>
+                    <div className='font-extrabold mb-2'>{gatherType}</div>
+                    {treasures}
+                </Popup>
+            </Marker>
+        );
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
@@ -124,7 +161,8 @@ export const MyMapContainer = () => {
                     url={zoneMetaMap[zoneId].bgFile}
                     bounds={bounds}
                 />
-                {markers}
+                {gpMarkers}
+                {trMarkers}
             </MapContainer>
 
             <MapDrawer

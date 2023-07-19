@@ -21,6 +21,17 @@ import gpPat0801 from '../assets/data/pat0801/GatherPoints.json';
 import gpPat0802 from '../assets/data/pat0802/GatherPoints.json';
 import gpPat0803 from '../assets/data/pat0803/GatherPoints.json';
 
+import trFld001 from '../assets/data/fld001/Treasures.json';
+import trFld002 from '../assets/data/fld002/Treasures.json';
+// import trFld003 from '../assets/data/fld003/Treasures.json';
+// import trFld004 from '../assets/data/fld004/Treasures.json';
+// import trDng007 from '../assets/data/dng007/Treasures.json';
+// import trDng009 from '../assets/data/dng009/Treasures.json';
+// import trPat0201 from '../assets/data/pat0201/Treasures.json';
+// import trPat0801 from '../assets/data/pat0801/Treasures.json';
+// import trPat0802 from '../assets/data/pat0802/Treasures.json';
+// import trPat0803 from '../assets/data/pat0803/Treasures.json';
+
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
 export const zoneMetaMap : ZoneMetaMap = {
@@ -28,11 +39,13 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapFld001,
         topFileKey: 'fld001_Top',
         gatherPoints: gpFld001,
+        treasureBoxes: trFld001,
     },
     fld002: {
         bgFile: mapFld002,
         topFileKey: 'fld002_Top',
         gatherPoints: gpFld002,
+        treasureBoxes: trFld002,
     },
     fld003: {
         bgFile: mapFld003,
