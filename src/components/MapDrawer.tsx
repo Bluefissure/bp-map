@@ -140,7 +140,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                         <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
                             <Tab label="Cities" {...a11yProps(0)} />
                             <Tab label="Fields" {...a11yProps(1)} />
-                            <Tab label="Dungeons" {...a11yProps(2)} />
+                            <Tab label="Explores" {...a11yProps(2)} />
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={tabValue} index={0}>
@@ -176,7 +176,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                     <CustomTabPanel value={tabValue} index={2}>
                         <Grid container spacing={2}>
                             {dungeonZoneIds.map((zId) => (
-                                <Grid item xs={6} key={`area-dng-${zId}`}>
+                                <Grid item xs={6} key={`area-pub-${zId}`}>
                                     <ListItemButton onClick={() => {setZoneId?.(zId)}}>
                                         <ListItemText primary={zoneMetaMap[zId].name?.ja_JP} />
                                     </ListItemButton>

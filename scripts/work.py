@@ -266,8 +266,14 @@ def analysis_sublevel_file(path, file):
 		'_PU.json': analysis_pu_file,
 		'_EN.json': analysis_en_file,
 	}
-	path_segs = path.split('\\')
+	path_segs = path.split(os.sep)
 	zone_id = path_segs[-2]
+	# don't analysis dng resource while pub resource exists
+	categories = ['dng', 'pat']
+	for cat in categories:
+		if (file.startswith(cat) and os.path.exists(
+			os.path.join(path, file.replace(cat, 'pub')))):
+			return
 	for (suffix, analysis_func) in analytic_function_map.items():
 		if file.endswith(suffix):
 			analysis_func(zone_id, os.path.join(path, file))
@@ -305,7 +311,7 @@ if __name__ == '__main__':
 
 	for (path, folders, files) in os.walk(os.path.join(PAK_PATH, 'Content', 'Maps')):
 		# print((path, folders, files))
-		if path.endswith('\sublevel'):
+		if path.endswith('sublevel'):
 			for file in files:
 				analysis_sublevel_file(path, file)
 		# if 'sublevel' in folders:

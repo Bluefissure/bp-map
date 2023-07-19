@@ -76,19 +76,26 @@ export const MyMapContainer = () => {
             icon = onlyOneTrasure ? AquaticGIcon : AquaticIcon;
         }
         const treasures = gp.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
-            (item, idx) => (
-                <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
-                    <div >
-                        {item.text.ja_JP}
+            (item, idx) => {
+                let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
+                if (item.reward_amount_min === item.reward_amount_max) {
+                    amount = item.reward_amount_min === 1 ? '' : `x${item.reward_amount_min}`;
+                }
+                return (
+                    <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
+                        <div>
+                            {item.text.ja_JP}
+                        </div>
+                        <div className="space-x-4">
+                            <span>{amount}</span>
+                            <span> </span>
+                        </div>
+                        <div >
+                            {`${Math.floor(item.rate / 100)}%`}
+                        </div>
                     </div>
-                    <div className="space-x-4">
-                        <span> </span>
-                        <span> </span>
-                    </div>
-                    <div >
-                        {`${Math.floor(item.rate / 100)}%`}
-                    </div>
-                </div>));
+                );
+            });
         return (
             <Marker position={position} icon={icon} key={gp.GatherPointKey}>
                 <Popup className='w-auto max-w-6xl'>
@@ -118,19 +125,26 @@ export const MyMapContainer = () => {
         }
         // const onlyOneTrasure = (tr.Data.lot_rate.length === 1) && (tr.Data.lot_rate[0].rate === 10000);
         const treasures = tr.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
-            (item, idx) => (
-                <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
-                    <div >
-                        {item.text.ja_JP}
+            (item, idx) => {
+                let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
+                if (item.reward_amount_min === item.reward_amount_max) {
+                    amount = item.reward_amount_min === 1 ? '' : `x${item.reward_amount_min}`;
+                }
+                return (
+                    <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
+                        <div>
+                            {item.text.ja_JP}
+                        </div>
+                        <div className="space-x-4">
+                            <span>{amount}</span>
+                            <span> </span>
+                        </div>
+                        <div >
+                            {`${Math.floor(item.rate / 100)}%`}
+                        </div>
                     </div>
-                    <div className="space-x-4">
-                        <span> </span>
-                        <span> </span>
-                    </div>
-                    <div >
-                        {`${Math.floor(item.rate / 100)}%`}
-                    </div>
-                </div>));
+                );
+            });
         return (
             <Marker position={position} icon={icon} key={tr.TreasureBoxKey}>
                 <Popup className='w-auto max-w-6xl'>
