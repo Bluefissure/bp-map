@@ -63,7 +63,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const [tabValue, setTabValue] = useState(0);
     const {drawerOpen, setDrawerOpen, setZoneId} = props;
     const [zoneSwitchOpen, setZoneSwitchOpen] = useState(true);
-    const [itemPanelOpen, setItemPanelOpen] = useState(false);
+    const [itemPanelOpen, setItemPanelOpen] = useState(true);
 
     const drawerWidth = '500px';
     const theme = useTheme();
@@ -118,6 +118,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
     // Generate map selector
     const cityAreas = [AreaCty01, AreaCty02];
     const fieldAreas = [AreaFld01, AreaFld02, AreaFld03, AreaFld04];
+    const cityZoneIds = ['cty001', 'cty002'];
     const fieldZoneIds = ['fld001', 'fld002', 'fld003', 'fld004'];
     const dungeonZoneIds = ['dng007', 'dng009', 'pat0201', 'pat0801', 'pat0802', 'pat0803'];
     // Generate marker selector
@@ -178,7 +179,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                         <ImageList >
                             {cityAreas.map((area, idx) => (
                                 <ImageListItem key={`area-cty-${idx}`} sx={{display: 'flex', flexDirection: 'row'}}>
-                                    <Button onClick={() => {console.log(area)}}>
+                                    <Button onClick={() => {setZoneId?.(cityZoneIds[idx])}}>
                                         <img
                                             src={`${area}?w=164&h=164&fit=crop&auto=format`}
                                             srcSet={`${area}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}

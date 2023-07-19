@@ -11,7 +11,7 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
-import { MapMarker, MapTreasure, MapContent, MapFreeBuff } from '../types/MapMarker';
+import { MapMarker, MapTreasure, MapContent, MapFreeBuff, MapWarpPoint } from '../types/MapMarker';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -28,6 +28,7 @@ import {
     TreasureLMIcon,
     TreasureABIcons,
     FreeBuffIcon,
+    WarpPointIcon,
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
 
@@ -57,9 +58,10 @@ export const MyMapContainer = () => {
         new LatLng(mapSize.lat * 1.25, mapSize.lng * 1.25),
     );
     const zoneTopKey = zoneMetaMap[zoneId].topFileKey;
-    const gatherPoints = zoneMetaMap[zoneId].gatherPoints;
+    const gatherPoints = zoneMetaMap[zoneId].gatherPoints ?? [];
     const treasureBoxes = zoneMetaMap[zoneId].treasureBoxes ?? [];
     const freeBuffs = zoneMetaMap[zoneId].freeBuffs ?? [];
+    const warpPoints = zoneMetaMap[zoneId].warpPoints ?? [];
     const bgConfig: {
         [key: string]: ZoneConfig
     } = bgConfigJson;
@@ -100,6 +102,7 @@ export const MyMapContainer = () => {
             });
         return {
             key: gp.GatherPointKey,
+            zIndex: 1,
             dataType: 'GatherPoint',
             markerType: gatherType,
             position,
@@ -137,6 +140,7 @@ export const MyMapContainer = () => {
 
         return {
             key: tr.TreasureBoxKey,
+            zIndex: 2,
             dataType: 'TreasureBox',
             markerType: markerType,
             position,
@@ -159,6 +163,7 @@ export const MyMapContainer = () => {
             });
         return {
             key: fb.FreeBuffPointKey,
+            zIndex: 1,
             dataType: 'FreeBuff',
             markerType: gatherType,
             position,
@@ -167,8 +172,27 @@ export const MyMapContainer = () => {
         } as MapMarker;
     });
 
+    const wpMarkers = warpPoints.map((wp) => {
+        const position = calcMapPosition(wp.RelativeLocation, zoneConfig, mapSize);
+        const markerType = 'Warp Point';
+        const icon = WarpPointIcon;
+        return {
+            key: wp.WarpPointKey,
+            dataType: 'WarpPoint',
+            zIndex: 10,
+            markerType: markerType,
+            position,
+            icon,
+            content: {
+                type: 'WarpPoint',
+                key: wp.WarpPointKey,
+                name: '',
+            } as MapWarpPoint,
+        } as MapMarker;
+    });
 
-    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers] as MapMarker[];
+
+    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers, ...wpMarkers] as MapMarker[];
     const markerTypeIconMap = {} as {[key:string]: string};
     markers.forEach((marker) => {
         let iconUrl = marker.icon.options.iconUrl;
@@ -201,32 +225,42 @@ export const MyMapContainer = () => {
         setFilteredMarkers(cf.allFiltered());
     });
 
-    const markerContentRender = (content: MapContent) => {
-        if (Array.isArray(content) && content.length > 0) {
-            return content.map((tr)=> (
-                <div className="flex justify-between items-center" key={tr.key}>
+    const markerContentRender = (dataType: string, content: MapContent) => {
+        if (Array.isArray(content)) {
+            if (['GatherPoint', 'TreasureBox', 'FreeBuff'].indexOf(dataType) !== -1) {
+                return content.map((tr)=> (
+                    <div className="flex justify-between items-center" key={tr.key}>
+                        <div>
+                            {tr.name}
+                        </div>
+                        <div className="space-x-4">
+                            <span>{tr.amount}</span>
+                            <span> </span>
+                        </div>
+                        <div >
+                            {tr.rate}
+                        </div>
+                    </div>
+                ));
+            }
+        } else {
+            if (dataType === 'WarpPoint') {
+                return (
                     <div>
-                        {tr.name}
+                        {content.name}
                     </div>
-                    <div className="space-x-4">
-                        <span>{tr.amount}</span>
-                        <span> </span>
-                    </div>
-                    <div >
-                        {tr.rate}
-                    </div>
-                </div>
-            ));
+                );
+            }
         }
         return '';
     };
 
     const renderedMarkers = filteredMarkers.map((marker) => {
         return (
-            <Marker position={marker.position} icon={marker.icon} key={marker.key}>
+            <Marker position={marker.position} icon={marker.icon} key={marker.key} zIndexOffset={marker.zIndex * 1000}>
                 <Popup className='w-auto max-w-6xl'>
                     <div className='font-extrabold mb-2'>{marker.markerType}</div>
-                    {markerContentRender(marker.content)}
+                    {markerContentRender(marker.dataType, marker.content)}
                 </Popup>
             </Marker>
         );

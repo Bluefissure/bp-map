@@ -16,17 +16,23 @@ export interface MapFreeBuff {
     rate: string;
     amount?: string;
 }
+export interface MapWarpPoint {
+    type: 'WarpPoint';
+    key: string;
+    name: string;
+}
 export interface MapBoss {
     type: 'Boss';
     key: string;
 }
 
-export type MapContent = MapTreasure[] | MapFreeBuff[];
+export type MapContent = MapTreasure[] | MapFreeBuff[] | MapWarpPoint;
 
 export type MapMarker = {
     key: string,
     dataType: string,
     markerType: string;
+    zIndex: number;
     position: LatLng;
     icon: L.Icon;
     content: MapContent;

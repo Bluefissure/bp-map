@@ -1,4 +1,6 @@
 
+import mapCty001 from '../assets/map/Cty001/UI_MapCty001.webp';
+import mapCty002 from '../assets/map/Cty002/UI_MapCty002.webp';
 import mapFld001 from '../assets/map/Fld001/UI_MapFld001.webp';
 import mapFld002 from '../assets/map/fld002/UI_MapFld002.webp';
 import mapFld003 from '../assets/map/fld003/UI_Map_Fld003.webp';
@@ -32,6 +34,19 @@ import trPat0801 from '../assets/data/pat0801/Treasures.json';
 import trPat0802 from '../assets/data/pat0802/Treasures.json';
 import trPat0803 from '../assets/data/pat0803/Treasures.json';
 
+import wpCty001 from '../assets/data/cty01/WarpPoints.json';
+import wpCty002 from '../assets/data/cty02/WarpPoints.json';
+import wpFld001 from '../assets/data/fld001/WarpPoints.json';
+import wpFld002 from '../assets/data/fld002/WarpPoints.json';
+import wpFld003 from '../assets/data/fld003/WarpPoints.json';
+import wpFld004 from '../assets/data/fld004/WarpPoints.json';
+import wpDng007 from '../assets/data/dng007/WarpPoints.json';
+import wpDng009 from '../assets/data/dng009/WarpPoints.json';
+import wpPat0201 from '../assets/data/pat0201/WarpPoints.json';
+import wpPat0801 from '../assets/data/pat0801/WarpPoints.json';
+import wpPat0802 from '../assets/data/pat0802/WarpPoints.json';
+import wpPat0803 from '../assets/data/pat0803/WarpPoints.json';
+
 
 import fbFld001 from '../assets/data/fld001/FreeBuffs.json';
 import fbFld002 from '../assets/data/fld002/FreeBuffs.json';
@@ -41,9 +56,20 @@ import fbFld004 from '../assets/data/fld004/FreeBuffs.json';
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
 export const zoneMetaMap : ZoneMetaMap = {
+    cty001: {
+        bgFile: mapCty001,
+        topFileKey: 'cty01_Top',
+        warpPoints: wpCty001,
+    },
+    cty002: {
+        bgFile: mapCty002,
+        topFileKey: 'cty02_Top',
+        warpPoints: wpCty002,
+    },
     fld001: {
         bgFile: mapFld001,
         topFileKey: 'fld001_Top',
+        warpPoints: wpFld001,
         gatherPoints: gpFld001,
         treasureBoxes: trFld001,
         freeBuffs: fbFld001,
@@ -51,6 +77,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     fld002: {
         bgFile: mapFld002,
         topFileKey: 'fld002_Top',
+        warpPoints: wpFld002,
         gatherPoints: gpFld002,
         treasureBoxes: trFld002,
         freeBuffs: fbFld002,
@@ -58,6 +85,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     fld003: {
         bgFile: mapFld003,
         topFileKey: 'fld003_Top',
+        warpPoints: wpFld003,
         gatherPoints: gpFld003,
         treasureBoxes: trFld003,
         freeBuffs: fbFld003,
@@ -65,6 +93,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     fld004: {
         bgFile: mapFld004,
         topFileKey: 'fld004_Top',
+        warpPoints: wpFld004,
         gatherPoints: gpFld004,
         treasureBoxes: trFld004,
         freeBuffs: fbFld004,
@@ -72,6 +101,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     dng007: {
         bgFile: mapDng007,
         topFileKey: 'dng007_Top',
+        warpPoints: wpDng007,
         gatherPoints: gpDng007,
         treasureBoxes: trDng007,
         name: {
@@ -81,6 +111,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     dng009: {
         bgFile: mapDng009,
         topFileKey: 'dng009_Top',
+        warpPoints: wpDng009,
         gatherPoints: gpDng009,
         treasureBoxes: trDng009,
         name: {
@@ -90,6 +121,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     pat0201: {
         bgFile: mapPat0201,
         topFileKey: 'pat0201_Top_F1',
+        warpPoints: wpPat0201,
         gatherPoints: gpPat0201,
         treasureBoxes: trPat0201,
         name: {
@@ -99,6 +131,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     pat0801: {
         bgFile: mapPat0801,
         topFileKey: 'pat0801_Top',
+        warpPoints: wpPat0801,
         gatherPoints: gpPat0801,
         treasureBoxes: trPat0801,
         name: {
@@ -108,6 +141,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     pat0802: {
         bgFile: mapPat0802,
         topFileKey: 'pat0802_Top',
+        warpPoints: wpPat0802,
         gatherPoints: gpPat0802,
         treasureBoxes: trPat0802,
         name: {
@@ -117,6 +151,7 @@ export const zoneMetaMap : ZoneMetaMap = {
     pat0803: {
         bgFile: mapPat0803,
         topFileKey: 'pat0803_Top',
+        warpPoints: wpPat0803,
         gatherPoints: gpPat0803,
         treasureBoxes: trPat0803,
         name: {
