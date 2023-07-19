@@ -62,9 +62,9 @@ export const TreasureIcon = L.icon({
 
 export const TreasureLMIcon = L.icon({
     iconUrl: TreasureLMIconImg,
-    iconSize: [ICON_SIZE_SMALL, ICON_SIZE_SMALL],
-    iconAnchor: [ICON_SIZE_SMALL / 2, ICON_SIZE_SMALL / 2],
-    popupAnchor: [0, - ICON_SIZE_SMALL / 2],
+    iconSize: [ICON_SIZE, ICON_SIZE],
+    iconAnchor: [ICON_SIZE / 2, ICON_SIZE / 2],
+    popupAnchor: [0, - ICON_SIZE / 2],
 });
 
 import TreasureABIcon140048000 from '../assets/icon/Adventureboard/UI_Adventureboard_140048000.webp';
@@ -109,4 +109,3 @@ export const TreasureABIcons = Object.entries(ABIcons).reduce(
         return icons;
     }, {}
 );
-

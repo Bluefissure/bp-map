@@ -1,17 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import crossfilter from 'crossfilter2';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
-import { zoneMetaMap } from './ZoneMetaMap';
-import { ZoneConfig } from '../types/ZoneConfig';
+
 import bgConfigJson from '../assets/data/bgconfig.json';
+import { zoneMetaMap } from './ZoneMetaMap';
+import { MapDrawer } from './MapDrawer';
+
+import { ZoneConfig } from '../types/ZoneConfig';
+import { MapMarker, MapTreasure, MapContent } from '../types/MapMarker';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { MapDrawer } from './MapDrawer';
 
 import {
     MineralIcon,
@@ -81,29 +85,20 @@ export const MyMapContainer = () => {
                 if (item.reward_amount_min === item.reward_amount_max) {
                     amount = item.reward_amount_min === 1 ? '' : `x${item.reward_amount_min}`;
                 }
-                return (
-                    <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
-                        <div>
-                            {item.text.ja_JP}
-                        </div>
-                        <div className="space-x-4">
-                            <span>{amount}</span>
-                            <span> </span>
-                        </div>
-                        <div >
-                            {`${Math.floor(item.rate / 100)}%`}
-                        </div>
-                    </div>
-                );
+                return {
+                    key: `item-treasure-${idx}`,
+                    amount: amount,
+                    name:  item.text.ja_JP,
+                    rate: `${Math.floor(item.rate / 100)}%`,
+                } as MapTreasure;
             });
-        return (
-            <Marker position={position} icon={icon} key={gp.GatherPointKey}>
-                <Popup className='w-auto max-w-6xl'>
-                    <div className='font-extrabold mb-2'>{gatherType}</div>
-                    {treasures}
-                </Popup>
-            </Marker>
-        );
+        return {
+            key: gp.GatherPointKey,
+            markerType: gatherType,
+            position,
+            icon,
+            content: treasures,
+        } as MapMarker;
     })
 
     const trMarkers = treasureBoxes?.map((tr) => {
@@ -112,44 +107,99 @@ export const MyMapContainer = () => {
         const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
         const mapLng = (worldX - zoneConfig.CapturePosition.X) / zoneConfig.CaptureSize.X * mapSize.lng;
         const position = new LatLng(mapLat, mapLng);
-        let gatherType = 'Treasure Box';
+        let markerType = 'Treasure Box';
         let icon = TreasureIcon;
         if (tr.Data.lot_rate.length > 0) {
             if (tr.Data.lot_rate[0].reward_type == 15) {
-                gatherType += ' - Liquid Memory';
+                markerType += ' - Liquid Memory';
                 icon = TreasureLMIcon;
             } else if (tr.Data.lot_rate[0].reward_type == 28) {
-                gatherType += ' - Adventure Board';
+                markerType += ' - Adventure Board';
                 icon = TreasureABIcons[tr.Data.lot_rate[0].reward_master_id] ?? TreasureABIcons['_'];
             }
         }
-        // const onlyOneTrasure = (tr.Data.lot_rate.length === 1) && (tr.Data.lot_rate[0].rate === 10000);
         const treasures = tr.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
             (item, idx) => {
                 let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
                 if (item.reward_amount_min === item.reward_amount_max) {
                     amount = item.reward_amount_min === 1 ? '' : `x${item.reward_amount_min}`;
                 }
-                return (
-                    <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>
-                        <div>
-                            {item.text.ja_JP}
-                        </div>
-                        <div className="space-x-4">
-                            <span>{amount}</span>
-                            <span> </span>
-                        </div>
-                        <div >
-                            {`${Math.floor(item.rate / 100)}%`}
-                        </div>
-                    </div>
-                );
+                return {
+                    key: `item-treasure-${idx}`,
+                    amount: amount,
+                    name:  item.text.ja_JP,
+                    rate: `${Math.floor(item.rate / 100)}%`,
+                } as MapTreasure;
             });
+
+        return {
+            key: tr.TreasureBoxKey,
+            markerType: markerType,
+            position,
+            icon,
+            content: treasures,
+        } as MapMarker;
+    }) ?? [];
+
+    const markers = [...gpMarkers, ...trMarkers] as MapMarker[];
+    const markerTypeIconMap = {} as {[key:string]: string};
+    markers.forEach((marker) => {
+        let iconUrl = marker.icon.options.iconUrl;
+        const normalIcons = [AquaticIcon, MineralIcon, PlantIcon];
+        [AquaticGIcon, MineralGIcon, PlantGIcon].forEach((icon, idx) => {
+            if (iconUrl === icon.options.iconUrl) {
+                iconUrl = normalIcons[idx].options.iconUrl;
+            }
+        })
+        markerTypeIconMap[marker.markerType] = iconUrl;
+    })
+
+    const cf = crossfilter(markers);
+    const markerTypeDim = cf.dimension((marker) => marker.markerType);
+    const treasureDim = cf.dimension((marker) => {
+        const content = marker.content;
+        if (Array.isArray(content)) {
+            return content.map((ele) => (ele.name));
+        }
+        return [];
+    }, true);
+    const [filteredMarkers, setFilteredMarkers] = useState(cf.allFiltered());
+
+    useEffect(() => {
+        setFilteredMarkers(cf.allFiltered());
+    }, [zoneId]);
+
+
+    cf.onChange(() => {
+        setFilteredMarkers(cf.allFiltered());
+    });
+
+    const markerContentRender = (content: MapContent) => {
+        if (Array.isArray(content) && content.length > 0) {
+            return content.map((tr)=> (
+                <div className="flex justify-between items-center" key={tr.key}>
+                    <div>
+                        {tr.name}
+                    </div>
+                    <div className="space-x-4">
+                        <span>{tr.amount}</span>
+                        <span> </span>
+                    </div>
+                    <div >
+                        {tr.rate}
+                    </div>
+                </div>
+            ));
+        }
+        return '';
+    };
+
+    const renderedMarkers = filteredMarkers.map((marker) => {
         return (
-            <Marker position={position} icon={icon} key={tr.TreasureBoxKey}>
+            <Marker position={marker.position} icon={marker.icon} key={marker.key}>
                 <Popup className='w-auto max-w-6xl'>
-                    <div className='font-extrabold mb-2'>{gatherType}</div>
-                    {treasures}
+                    <div className='font-extrabold mb-2'>{marker.markerType}</div>
+                    {markerContentRender(marker.content)}
                 </Popup>
             </Marker>
         );
@@ -165,7 +215,6 @@ export const MyMapContainer = () => {
             <IconButton
                 color="inherit"
                 aria-label="open drawer"
-                // edge="end"
                 onClick={handleDrawerOpen}
                 sx={{ 
                     ...(drawerOpen && { display: 'none' }),
@@ -195,14 +244,17 @@ export const MyMapContainer = () => {
                     url={zoneMetaMap[zoneId].bgFile}
                     bounds={bounds}
                 />
-                {gpMarkers}
-                {trMarkers}
+                {renderedMarkers}
             </MapContainer>
 
             <MapDrawer
                 drawerOpen={drawerOpen}
                 setDrawerOpen={(value: boolean) => {setDrawerOpen(value)}}
+                zoneId={zoneId}
                 setZoneId={(zId: string) => {setZoneId(zId)}}
+                markerTypeDim={markerTypeDim}
+                treasureDim={treasureDim}
+                markerTypeIconMap={markerTypeIconMap}
             />
             
         </Box>
