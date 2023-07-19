@@ -7,6 +7,7 @@ import PlantGIconImg from '../assets/icon/Gather/UI_IconGatherPlant_G.webp';
 import AquaticGIconImg from '../assets/icon/Gather/UI_IconGatherAquatic_G.webp';
 import TreasureIconImg from '../assets/icon/Map/treasurebox.webp';
 import TreasureLMIconImg from '../assets/icon/LiquidMemory/UI_LiquidMemoryListLvOn.webp';
+import FreeBuffIconImg from '../assets/icon/Map/UI_Map_95.webp';
 
 const ICON_SIZE = 36;
 const ICON_SIZE_SMALL = 24;
@@ -48,6 +49,13 @@ export const AquaticIcon = L.icon({
 
 export const AquaticGIcon = L.icon({
     iconUrl: AquaticGIconImg,
+    iconSize: [ICON_SIZE, ICON_SIZE],
+    iconAnchor: [ICON_SIZE / 2, ICON_SIZE / 2],
+    popupAnchor: [0, - ICON_SIZE / 2],
+});
+
+export const FreeBuffIcon = L.icon({
+    iconUrl: FreeBuffIconImg,
     iconSize: [ICON_SIZE, ICON_SIZE],
     iconAnchor: [ICON_SIZE / 2, ICON_SIZE / 2],
     popupAnchor: [0, - ICON_SIZE / 2],

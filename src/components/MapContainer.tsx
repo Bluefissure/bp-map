@@ -11,7 +11,7 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
-import { MapMarker, MapTreasure, MapContent } from '../types/MapMarker';
+import { MapMarker, MapTreasure, MapContent, MapFreeBuff } from '../types/MapMarker';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -27,8 +27,9 @@ import {
     TreasureIcon,
     TreasureLMIcon,
     TreasureABIcons,
+    FreeBuffIcon,
 } from './Icons';
-
+import { RelativeLocation } from '../types/GatherPoint';
 
 
 export const MyMapContainer = () => {
@@ -57,18 +58,23 @@ export const MyMapContainer = () => {
     );
     const zoneTopKey = zoneMetaMap[zoneId].topFileKey;
     const gatherPoints = zoneMetaMap[zoneId].gatherPoints;
-    const treasureBoxes = zoneMetaMap[zoneId].treasureBoxes;
+    const treasureBoxes = zoneMetaMap[zoneId].treasureBoxes ?? [];
+    const freeBuffs = zoneMetaMap[zoneId].freeBuffs ?? [];
     const bgConfig: {
         [key: string]: ZoneConfig
     } = bgConfigJson;
     const zoneConfig = bgConfig[zoneTopKey];
-    
-    const gpMarkers = gatherPoints.map((gp) => {
-        const worldX = gp.RelativeLocation.X;
-        const worldY = gp.RelativeLocation.Y;
+
+    const calcMapPosition = (rel: RelativeLocation, zoneConfig: ZoneConfig, mapSize: LatLng) => {
+        const worldX = rel.X;
+        const worldY = rel.Y;
         const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
         const mapLng = (worldX - zoneConfig.CapturePosition.X) / zoneConfig.CaptureSize.X * mapSize.lng;
-        const position = new LatLng(mapLat, mapLng);
+        return new LatLng(mapLat, mapLng);
+    }
+    
+    const gpMarkers = gatherPoints.map((gp) => {
+        const position = calcMapPosition(gp.RelativeLocation, zoneConfig, mapSize);
         let gatherType = 'Gathering - Mineral';
         const onlyOneTrasure = (gp.Data.lot_rate.length === 1) && (gp.Data.lot_rate[0].rate === 10000);
         let icon = onlyOneTrasure ? MineralGIcon : MineralIcon;
@@ -94,19 +100,16 @@ export const MyMapContainer = () => {
             });
         return {
             key: gp.GatherPointKey,
+            dataType: 'GatherPoint',
             markerType: gatherType,
             position,
             icon,
             content: treasures,
         } as MapMarker;
-    })
+    });
 
-    const trMarkers = treasureBoxes?.map((tr) => {
-        const worldX = tr.RelativeLocation.X;
-        const worldY = tr.RelativeLocation.Y;
-        const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
-        const mapLng = (worldX - zoneConfig.CapturePosition.X) / zoneConfig.CaptureSize.X * mapSize.lng;
-        const position = new LatLng(mapLat, mapLng);
+    const trMarkers = treasureBoxes.map((tr) => {
+        const position = calcMapPosition(tr.RelativeLocation, zoneConfig, mapSize);
         let markerType = 'Treasure Box';
         let icon = TreasureIcon;
         if (tr.Data.lot_rate.length > 0) {
@@ -134,14 +137,38 @@ export const MyMapContainer = () => {
 
         return {
             key: tr.TreasureBoxKey,
+            dataType: 'TreasureBox',
             markerType: markerType,
             position,
             icon,
             content: treasures,
         } as MapMarker;
-    }) ?? [];
+    });
 
-    const markers = [...gpMarkers, ...trMarkers] as MapMarker[];
+    const fbMarkers = freeBuffs.map((fb) => {
+        const position = calcMapPosition(fb.RelativeLocation, zoneConfig, mapSize);
+        const gatherType = 'Free Buff';
+        const icon = FreeBuffIcon;
+        const freebuffs = fb.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
+            (item, idx) => {
+                return {
+                    key: `freebuff-${idx}`,
+                    name:  item.text.ja_JP,
+                    rate: `${Math.floor(item.rate / 100)}%`,
+                } as MapFreeBuff;
+            });
+        return {
+            key: fb.FreeBuffPointKey,
+            dataType: 'FreeBuff',
+            markerType: gatherType,
+            position,
+            icon,
+            content: freebuffs,
+        } as MapMarker;
+    });
+
+
+    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers] as MapMarker[];
     const markerTypeIconMap = {} as {[key:string]: string};
     markers.forEach((marker) => {
         let iconUrl = marker.icon.options.iconUrl;

@@ -32,6 +32,12 @@ import trPat0801 from '../assets/data/pat0801/Treasures.json';
 import trPat0802 from '../assets/data/pat0802/Treasures.json';
 import trPat0803 from '../assets/data/pat0803/Treasures.json';
 
+
+import fbFld001 from '../assets/data/fld001/FreeBuffs.json';
+import fbFld002 from '../assets/data/fld002/FreeBuffs.json';
+import fbFld003 from '../assets/data/fld003/FreeBuffs.json';
+import fbFld004 from '../assets/data/fld004/FreeBuffs.json';
+
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
 export const zoneMetaMap : ZoneMetaMap = {
@@ -40,24 +46,28 @@ export const zoneMetaMap : ZoneMetaMap = {
         topFileKey: 'fld001_Top',
         gatherPoints: gpFld001,
         treasureBoxes: trFld001,
+        freeBuffs: fbFld001,
     },
     fld002: {
         bgFile: mapFld002,
         topFileKey: 'fld002_Top',
         gatherPoints: gpFld002,
         treasureBoxes: trFld002,
+        freeBuffs: fbFld002,
     },
     fld003: {
         bgFile: mapFld003,
         topFileKey: 'fld003_Top',
         gatherPoints: gpFld003,
         treasureBoxes: trFld003,
+        freeBuffs: fbFld003,
     },
     fld004: {
         bgFile: mapFld004,
         topFileKey: 'fld004_Top',
         gatherPoints: gpFld004,
         treasureBoxes: trFld004,
+        freeBuffs: fbFld004,
     },
     dng007: {
         bgFile: mapDng007,

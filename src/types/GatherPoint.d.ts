@@ -4,7 +4,7 @@ export type RelativeLocation = {
     Z: number;
 }
 
-export type RewardText = {
+export type TextEntry = {
     id: number;
     ja_JP: string;
 }
@@ -15,7 +15,7 @@ export type Reward = {
     reward_amount_min: number;
     reward_amount_max: number;
     rate: number;
-    text: RewardText;
+    text: TextEntry;
 }
 
 export type GatherPointData = {

@@ -1,11 +1,12 @@
 
 import { GatherPoint } from './GatherPoint';
 import { TreasureBox } from './TreasureBox';
+import { FreeBuff } from './FreeBuff';
 
 export type ZoneName = {
     ja_JP: string;
     en_US?: string;
-    zh_CN?: string
+    zh_CN?: string;
 }
 
 export type ZoneMetaMap = {
@@ -14,6 +15,7 @@ export type ZoneMetaMap = {
         topFileKey: string;
         gatherPoints: GatherPoint[];
         treasureBoxes?: TreasureBox[];
+        freeBuffs?: FreeBuff[];
         name?: ZoneName;
     };
 };
