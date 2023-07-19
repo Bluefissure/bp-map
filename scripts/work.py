@@ -58,6 +58,36 @@ def get_apiext_items():
 		APIEXT_DATA['items'][item['id']] = stored_item
 	return APIEXT_DATA['items']
 
+def get_apiext_liquid_memories():
+	global APIEXT_DATA
+	if 'liquid_memory' in APIEXT_DATA:
+		return APIEXT_DATA['liquid_memory']
+	lm_file = os.path.join(APIEXT_PATH, 'liquid_memory.json')
+	with codecs.open(lm_file, 'r', 'utf8') as f:
+		lm_list = json.load(f)
+	for lm in lm_list:
+		stored_item = {
+			'id': lm['id'],
+			'name': lm['efficacy_name'],
+		}
+		APIEXT_DATA['liquid_memory'][lm['id']] = stored_item
+	return APIEXT_DATA['liquid_memory']
+
+def get_apiext_adventure_boards():
+	global APIEXT_DATA
+	if 'adventure_boards' in APIEXT_DATA:
+		return APIEXT_DATA['adventure_boards']
+	boards_file = os.path.join(APIEXT_PATH, 'master_adventure_board.json')
+	with codecs.open(boards_file, 'r', 'utf8') as f:
+		boards_list = json.load(f)
+	for board in boards_list:
+		stored_item = {
+			'id': board['id'],
+			'name': board['name'],
+		}
+		APIEXT_DATA['adventure_boards'][board['id']] = stored_item
+	return APIEXT_DATA['adventure_boards']
+
 def get_item_text(item_id):
 	global OUTPUT_TEXT
 	items = get_apiext_items()
@@ -67,6 +97,23 @@ def get_item_text(item_id):
 	result = item_text.get(item_name_id, {})
 	return result
 
+def get_liquid_memory_text(lm_id):
+	global OUTPUT_TEXT
+	lms = get_apiext_liquid_memories()
+	lm = lms.get(lm_id, {})
+	lm_name_id = lm.get('name', 0)
+	lm_text = OUTPUT_TEXT['master_liquid_memory_text']
+	result = lm_text.get(lm_name_id, {})
+	return result
+
+def get_adventure_board_text(ab_id):
+	global OUTPUT_TEXT
+	boards = get_apiext_adventure_boards()
+	board = boards.get(ab_id, {})
+	board_name_id = board.get('name', 0)
+	board_text = OUTPUT_TEXT['master_adventure_boards_text']
+	result = board_text.get(board_name_id, {})
+	return result
 
 def get_freebuff_text(freebuff_type):
 	global OUTPUT_TEXT
@@ -101,15 +148,31 @@ def get_apiext_treasures():
 	with codecs.open(treasures_file, 'r', 'utf8') as f:
 		treasures_list = json.load(f)
 	for treasure in treasures_list:
-		stored_treasure = {
-			'id': treasure['id'],
-			'lot_rate': list(map(lambda x: {
+		lot_rates = []
+		for x in treasure['lot_rate']:
+			text = ''
+			if x['reward_type'] == 3:
+				text = get_item_text(x['reward_master_id'])
+			elif x['reward_type'] == 15:
+				text = get_liquid_memory_text(x['reward_master_id'])
+			elif x['reward_type'] == 28:
+				text = get_adventure_board_text(x['reward_master_id'])
+			else:
+				text = {
+					'id': x['reward_master_id'],
+					'ja_JP': 'Unknown Type',
+				}
+			lot_rates.append({
 				'reward_master_id': x['reward_master_id'],
+				'reward_type': x['reward_type'],
 				'reward_amount_min': x['reward_amount_min'],
 				'reward_amount_max': x['reward_amount_max'],
 				'rate': x['rate'],
-				'text': get_item_text(x['reward_master_id']),
-			}, treasure['lot_rate'])),
+				'text': text,
+			})
+		stored_treasure = {
+			'id': treasure['id'],
+			'lot_rate': lot_rates,
 		}
 		APIEXT_DATA['treasures'][treasure['id']] = stored_treasure
 	return APIEXT_DATA['treasures']

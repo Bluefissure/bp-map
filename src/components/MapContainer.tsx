@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
-import { MineralIcon, PlantIcon, AquaticIcon, MineralGIcon, PlantGIcon, AquaticGIcon, TreasureIcon } from './Icons';
 import { zoneMetaMap } from './ZoneMetaMap';
 import { ZoneConfig } from '../types/ZoneConfig';
 import bgConfigJson from '../assets/data/bgconfig.json';
@@ -13,6 +12,18 @@ import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MapDrawer } from './MapDrawer';
+
+import {
+    MineralIcon,
+    PlantIcon,
+    AquaticIcon,
+    MineralGIcon,
+    PlantGIcon,
+    AquaticGIcon,
+    TreasureIcon,
+    TreasureLMIcon,
+    TreasureABIcons,
+} from './Icons';
 
 
 
@@ -94,9 +105,18 @@ export const MyMapContainer = () => {
         const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
         const mapLng = (worldX - zoneConfig.CapturePosition.X) / zoneConfig.CaptureSize.X * mapSize.lng;
         const position = new LatLng(mapLat, mapLng);
-        const gatherType = 'Treasure Box';
+        let gatherType = 'Treasure Box';
+        let icon = TreasureIcon;
+        if (tr.Data.lot_rate.length > 0) {
+            if (tr.Data.lot_rate[0].reward_type == 15) {
+                gatherType += ' - Liquid Memory';
+                icon = TreasureLMIcon;
+            } else if (tr.Data.lot_rate[0].reward_type == 28) {
+                gatherType += ' - Adventure Board';
+                icon = TreasureABIcons[tr.Data.lot_rate[0].reward_master_id] ?? TreasureABIcons['_'];
+            }
+        }
         // const onlyOneTrasure = (tr.Data.lot_rate.length === 1) && (tr.Data.lot_rate[0].rate === 10000);
-        const icon = TreasureIcon;
         const treasures = tr.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
             (item, idx) => (
                 <div className="flex justify-between items-center" key={`item-treasure-${idx}`}>

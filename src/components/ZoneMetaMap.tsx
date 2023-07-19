@@ -23,14 +23,14 @@ import gpPat0803 from '../assets/data/pat0803/GatherPoints.json';
 
 import trFld001 from '../assets/data/fld001/Treasures.json';
 import trFld002 from '../assets/data/fld002/Treasures.json';
-// import trFld003 from '../assets/data/fld003/Treasures.json';
-// import trFld004 from '../assets/data/fld004/Treasures.json';
-// import trDng007 from '../assets/data/dng007/Treasures.json';
-// import trDng009 from '../assets/data/dng009/Treasures.json';
-// import trPat0201 from '../assets/data/pat0201/Treasures.json';
-// import trPat0801 from '../assets/data/pat0801/Treasures.json';
-// import trPat0802 from '../assets/data/pat0802/Treasures.json';
-// import trPat0803 from '../assets/data/pat0803/Treasures.json';
+import trFld003 from '../assets/data/fld003/Treasures.json';
+import trFld004 from '../assets/data/fld004/Treasures.json';
+import trDng007 from '../assets/data/dng007/Treasures.json';
+import trDng009 from '../assets/data/dng009/Treasures.json';
+import trPat0201 from '../assets/data/pat0201/Treasures.json';
+import trPat0801 from '../assets/data/pat0801/Treasures.json';
+import trPat0802 from '../assets/data/pat0802/Treasures.json';
+import trPat0803 from '../assets/data/pat0803/Treasures.json';
 
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
@@ -51,16 +51,19 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapFld003,
         topFileKey: 'fld003_Top',
         gatherPoints: gpFld003,
+        treasureBoxes: trFld003,
     },
     fld004: {
         bgFile: mapFld004,
         topFileKey: 'fld004_Top',
         gatherPoints: gpFld004,
+        treasureBoxes: trFld004,
     },
     dng007: {
         bgFile: mapDng007,
         topFileKey: 'dng007_Top',
         gatherPoints: gpDng007,
+        treasureBoxes: trDng007,
         name: {
             ja_JP: '枷神の産屋',
         }
@@ -69,6 +72,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapDng009,
         topFileKey: 'dng009_Top',
         gatherPoints: gpDng009,
+        treasureBoxes: trDng009,
         name: {
             ja_JP: '巨竜の爪痕',
         }
@@ -77,6 +81,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapPat0201,
         topFileKey: 'pat0201_Top_F1',
         gatherPoints: gpPat0201,
+        treasureBoxes: trPat0201,
         name: {
             ja_JP: 'ボルオム遺跡',
         }
@@ -85,6 +90,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapPat0801,
         topFileKey: 'pat0801_Top',
         gatherPoints: gpPat0801,
+        treasureBoxes: trPat0801,
         name: {
             ja_JP: '木漏れ日射す林道',
         }
@@ -93,6 +99,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapPat0802,
         topFileKey: 'pat0802_Top',
         gatherPoints: gpPat0802,
+        treasureBoxes: trPat0802,
         name: {
             ja_JP: 'ともし火の森',
         }
@@ -101,6 +108,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         bgFile: mapPat0803,
         topFileKey: 'pat0803_Top',
         gatherPoints: gpPat0803,
+        treasureBoxes: trPat0803,
         name: {
             ja_JP: '雨止まぬ森',
         }
