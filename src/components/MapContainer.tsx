@@ -186,7 +186,7 @@ export const MyMapContainer = () => {
             content: {
                 type: 'WarpPoint',
                 key: wp.WarpPointKey,
-                name: '',
+                name: wp.Data.ja_JP,
             } as MapWarpPoint,
         } as MapMarker;
     });

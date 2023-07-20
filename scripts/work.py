@@ -26,13 +26,21 @@ def load_apiext_texts():
 				'ja_JP': text['text'],
 			}
 
+
+
 def load_pak_text(name):
 	global OUTPUT_TEXT
 	text_file = os.path.join(PAK_PATH, f'Content/Text/{name}.json')
 	with codecs.open(text_file, 'r', 'utf8') as f:
 		text_content = json.load(f)
 	for item in text_content[0]['Properties']['TextTable']:
-		text_id = item['Id']['IdNumber']
+		text_id_number = item['Id']['IdNumber']
+		text_id_string = item['Id']['IdString']
+		id_type_map = {
+			'FreeBuffTypes': text_id_number,
+			'WarpPointName': text_id_string,
+		}
+		text_id = id_type_map.get(name, text_id_number)
 		text = item['Text']
 		OUTPUT_TEXT[name][text_id] = {
 			'id': text_id,
@@ -41,6 +49,7 @@ def load_pak_text(name):
 
 def load_pak_texts():
 	load_pak_text('FreeBuffTypes')
+	load_pak_text('WarpPointName')
 
 
 def get_apiext_items():
@@ -119,6 +128,11 @@ def get_freebuff_text(freebuff_type):
 	global OUTPUT_TEXT
 	freebuff_text = OUTPUT_TEXT['FreeBuffTypes']
 	return freebuff_text.get(freebuff_type, {})
+
+def get_warppoint_text(warppoint_id):
+	global OUTPUT_TEXT
+	warppoint_text = OUTPUT_TEXT['WarpPointName']
+	return warppoint_text.get(warppoint_id, {})
 
 
 def get_apiext_freebuffs():
@@ -233,7 +247,11 @@ def gen_treasures(pu_file):
 
 def gen_warp_points(sc_file):
 	results = get_positions("WarpPoint", "BP_LocalWarpPoint_C", sc_file)
+	results += get_positions("WarpPoint", "BP_WarpPoint_C", sc_file)
 	# populate results
+	for result in results:
+		wp_id = result['WarpPointId']
+		result['Data'] = get_warppoint_text(wp_id)
 	return results
 
 def analysis_sc_file(zone_id, sc_file):
