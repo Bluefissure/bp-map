@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import crossfilter from 'crossfilter2';
@@ -12,6 +12,7 @@ import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
 import { MapMarker, MapTreasure, MapContent, MapFreeBuff, MapWarpPoint } from '../types/MapMarker';
+import { ContentType } from './MapDrawer';
 
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -205,16 +206,45 @@ export const MyMapContainer = () => {
         markerTypeIconMap[marker.markerType] = iconUrl;
     })
 
-    const cf = crossfilter(markers);
-    const markerTypeDim = cf.dimension((marker) => marker.markerType);
-    const treasureDim = cf.dimension((marker) => {
+    const cf = useMemo(() => crossfilter(markers), [markers, zoneId]);
+    const markerTypeDim = useMemo(() => (cf.dimension((marker) => marker.markerType)), [cf]);
+    const markerContentToType = useMemo(() => {
+        const tempDict = {} as {[key: string]: string};
+        markers.forEach((marker) => {
+            const content = marker.content;
+            if (Array.isArray(content)) {
+                content.forEach((ele) => {
+                    tempDict[ele.name] = marker.markerType;
+                })
+                return content.map((ele) => (ele.name));
+            } else {
+                if (marker.dataType === 'WarpPoint') {
+                    tempDict[(marker.content as MapWarpPoint).name] = marker.markerType;
+                }
+            }
+        })
+        return tempDict;
+    }, [cf]);
+    const contentDim = useMemo(() => (cf.dimension((marker) => {
         const content = marker.content;
         if (Array.isArray(content)) {
             return content.map((ele) => (ele.name));
+        } else {
+            if (marker.dataType === 'WarpPoint') {
+                return [(marker.content as MapWarpPoint).name];
+            }
         }
         return [];
-    }, true);
+    }, true)), [cf]);
     const [filteredMarkers, setFilteredMarkers] = useState(cf.allFiltered());
+    const [contentDimGroupAll, setContentDimGroupAll] = useState(
+        contentDim.group().all().map(
+            (x) => ({
+                key: x.key as string,
+                value: x.value as number,
+                type: markerContentToType[x.key as string] ?? 'Unknown',
+            } as ContentType)
+        ));
 
     useEffect(() => {
         setFilteredMarkers(cf.allFiltered());
@@ -223,6 +253,13 @@ export const MyMapContainer = () => {
 
     cf.onChange(() => {
         setFilteredMarkers(cf.allFiltered());
+        setContentDimGroupAll(contentDim.group().all().map(
+            (x) => ({
+                key: x.key as string,
+                value: x.value as number,
+                type: markerContentToType[x.key as string] ?? 'Unknown',
+            } as ContentType)
+        ));
     });
 
     const markerContentRender = (dataType: string, content: MapContent) => {
@@ -314,7 +351,8 @@ export const MyMapContainer = () => {
                 zoneId={zoneId}
                 setZoneId={(zId: string) => {setZoneId(zId)}}
                 markerTypeDim={markerTypeDim}
-                treasureDim={treasureDim}
+                contentDim={contentDim}
+                contentDimGroupAll={contentDimGroupAll}
                 markerTypeIconMap={markerTypeIconMap}
             />
             

@@ -26,6 +26,9 @@ import {
     ImageList,
     ImageListItem, 
     Stack,
+    Autocomplete,
+    TextField,
+    ListItem,
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -49,13 +52,20 @@ interface setStringFunc {
     (value: string): void;
 }
 
+export type ContentType = {
+    key: string,
+    value: number,
+    type: string,
+};
+
 interface MapDrawerProps {
     drawerOpen: boolean,
     setDrawerOpen?: setBooleanFunc,
     zoneId?: string,
     setZoneId?: setStringFunc,
     markerTypeDim?: crossfilter.Dimension<MapMarker, string>,
-    treasureDim?: crossfilter.Dimension<MapMarker, string>,
+    contentDim?: crossfilter.Dimension<MapMarker, string>,
+    contentDimGroupAll?: ContentType[],
     markerTypeIconMap?: {[key:string]: string},
 }
 
@@ -63,9 +73,10 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const [tabValue, setTabValue] = useState(0);
     const {drawerOpen, setDrawerOpen, setZoneId} = props;
     const [zoneSwitchOpen, setZoneSwitchOpen] = useState(true);
-    const [itemPanelOpen, setItemPanelOpen] = useState(true);
+    const [typePanelOpen, setTypePanelOpen] = useState(true);
 
     const drawerWidth = '500px';
+    const drawerContentWidth = '450px';
     const theme = useTheme();
 
     const DrawerHeader = styled('div')(({ theme }) => ({
@@ -76,6 +87,17 @@ export const MapDrawer = (props: MapDrawerProps) => {
         ...theme.mixins.toolbar,
         justifyContent: 'flex-start',
     }));
+
+    const DrawerFooter = styled('div')(({ theme }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        padding: theme.spacing(0, 1),
+        // necessary for content to be below app bar
+        ...theme.mixins.toolbar,
+        justifyContent: 'flex-start',
+        marginTop: `auto`,
+    }));
+    
 
     const handleDrawerClose = () => {
         setDrawerOpen?.(false);
@@ -123,11 +145,16 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const dungeonZoneIds = ['dng007', 'dng009', 'pat0201', 'pat0801', 'pat0802', 'pat0803'];
     // Generate marker selector
     const markerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
+    const contentTypes = props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? [];
     const [filteredOutTypes, setFilteredOutTypes] = useState([] as string[]);
+    const [filteredContentTypes, setFilteredContentTypes] = useState([] as ContentType[]);
 
     useEffect(() => {
         props.markerTypeDim?.filterFunction((d: string) => (filteredOutTypes.indexOf(d) === -1));
-    }, [filteredOutTypes, props.zoneId]);
+        props.contentDim?.filterFunction((d: string) => (
+            filteredContentTypes.length === 0 || filteredContentTypes.map(x => x.key).indexOf(d) !== -1));
+    }, [filteredOutTypes, filteredContentTypes, props.zoneId]);
+
 
     const onClickMarkerType = (type: string) => {
         const existingFilteredOutTypes = new Set([...filteredOutTypes]);
@@ -137,6 +164,10 @@ export const MapDrawer = (props: MapDrawerProps) => {
             existingFilteredOutTypes.add(type);
         }
         setFilteredOutTypes([...existingFilteredOutTypes]);
+    }
+
+    const onItemSearchChange = (event: React.SyntheticEvent, value: ContentType[]) => {
+        setFilteredContentTypes(value);
     }
 
     return (
@@ -220,15 +251,17 @@ export const MapDrawer = (props: MapDrawerProps) => {
                 
                 <Divider />
 
-                <ListItemButton onClick={() => {setItemPanelOpen(!itemPanelOpen)}}>
+                <Divider />
+
+                <ListItemButton onClick={() => {setTypePanelOpen(!typePanelOpen)}}>
                     <ListItemIcon>
                         <RoomIcon />
                     </ListItemIcon>
                     <ListItemText primary="Marker" />
-                    {itemPanelOpen ? <ExpandLess /> : <ExpandMore />}
+                    {typePanelOpen ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
-                <Collapse in={itemPanelOpen} timeout="auto">
-                    <Box sx={{ margin: 3, width: 450 }}>
+                <Collapse in={typePanelOpen} timeout="auto">
+                    <Box sx={{ margin: 3, width: drawerContentWidth }}>
                         <Stack spacing={{ xs: 1, sm: 2 }} direction="row" useFlexGap flexWrap="wrap">
                             {markerTypes.map((text: string, idx) => {
                                 const iconUrl = props.markerTypeIconMap?.[text] ?? '';
@@ -250,6 +283,37 @@ export const MapDrawer = (props: MapDrawerProps) => {
                     </Box>
                 </Collapse>
             </List>
+
+            <DrawerFooter>
+                <Divider />
+                <List>
+                    <ListItem>
+                        <Stack spacing={3} sx={{ width: drawerContentWidth }}>
+                            <Autocomplete
+                                multiple
+                                id="tags-standard"
+                                options={contentTypes.sort((x, y) =>
+                                    (x.type < y.type) ? -1 : ((x.type > y.type) ? 1 : 0)
+                                )}
+                                getOptionLabel={(option) => option.key}
+                                onChange={onItemSearchChange}
+                                value={filteredContentTypes}
+                                groupBy={(option) => option.type}
+                                isOptionEqualToValue={
+                                    (option, value) => (option.key === value.key)
+                                }
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Search"
+                                        placeholder="Items"
+                                    />
+                                )}
+                            />
+                        </Stack>
+                    </ListItem>
+                </List>
+            </DrawerFooter>
         </Drawer>
     );
 }
