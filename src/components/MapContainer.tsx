@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import { useTranslation } from 'react-i18next';
 import crossfilter from 'crossfilter2';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
@@ -14,9 +14,15 @@ import { ZoneConfig } from '../types/ZoneConfig';
 import { MapMarker, MapTreasure, MapContent, MapFreeBuff, MapWarpPoint } from '../types/MapMarker';
 import { ContentType } from './MapDrawer';
 
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
+import {
+    Box,
+    SpeedDial,
+    SpeedDialAction,
+    IconButton,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
+import GTranslateIcon from '@mui/icons-material/GTranslate';
 
 import {
     MineralIcon,
@@ -32,9 +38,11 @@ import {
     WarpPointIcon,
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
+import i18n from '../i18n';
 
 
 export const MyMapContainer = () => {
+    const { t } = useTranslation();
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const zoneIdParam = searchParams.get('zone_id');
@@ -78,14 +86,14 @@ export const MyMapContainer = () => {
     
     const gpMarkers = gatherPoints.map((gp) => {
         const position = calcMapPosition(gp.RelativeLocation, zoneConfig, mapSize);
-        let gatherType = 'Gathering - Mineral';
+        let gatherType = t('markerType.gatheringMineral');
         const onlyOneTrasure = (gp.Data.lot_rate.length === 1) && (gp.Data.lot_rate[0].rate === 10000);
         let icon = onlyOneTrasure ? MineralGIcon : MineralIcon;
         if (gp.GatherPointTag.startsWith('P')) {
-            gatherType = 'Gathering - Plant';
+            gatherType = t('markerType.gatheringPlant');
             icon = onlyOneTrasure ? PlantGIcon : PlantIcon;
         } else if (gp.GatherPointTag.startsWith('A')) {
-            gatherType = 'Gathering - Aquatic';
+            gatherType = t('markerType.gatheringAquatic');
             icon = onlyOneTrasure ? AquaticGIcon : AquaticIcon;
         }
         const treasures = gp.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
@@ -114,14 +122,14 @@ export const MyMapContainer = () => {
 
     const trMarkers = treasureBoxes.map((tr) => {
         const position = calcMapPosition(tr.RelativeLocation, zoneConfig, mapSize);
-        let markerType = 'Treasure Box';
+        let markerType = t('markerType.treasureBox');
         let icon = TreasureIcon;
         if (tr.Data.lot_rate.length > 0) {
             if (tr.Data.lot_rate[0].reward_type == 15) {
-                markerType += ' - Liquid Memory';
+                markerType = t('markerType.treasureBoxLM');
                 icon = TreasureLMIcon;
             } else if (tr.Data.lot_rate[0].reward_type == 28) {
-                markerType += ' - Adventure Board';
+                markerType = t('markerType.treasureBoxAB');
                 icon = TreasureABIcons[tr.Data.lot_rate[0].reward_master_id] ?? TreasureABIcons['_'];
             }
         }
@@ -152,7 +160,7 @@ export const MyMapContainer = () => {
 
     const fbMarkers = freeBuffs.map((fb) => {
         const position = calcMapPosition(fb.RelativeLocation, zoneConfig, mapSize);
-        const gatherType = 'Free Buff';
+        const gatherType = t('markerType.freeBuff');
         const icon = FreeBuffIcon;
         const freebuffs = fb.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
             (item, idx) => {
@@ -175,7 +183,7 @@ export const MyMapContainer = () => {
 
     const wpMarkers = warpPoints.map((wp) => {
         const position = calcMapPosition(wp.RelativeLocation, zoneConfig, mapSize);
-        const markerType = 'Warp Point';
+        const markerType = t('markerType.warpPoint');
         const icon = WarpPointIcon;
         return {
             key: wp.WarpPointKey,
@@ -242,7 +250,7 @@ export const MyMapContainer = () => {
             (x) => ({
                 key: x.key as string,
                 value: x.value as number,
-                type: markerContentToType[x.key as string] ?? 'Unknown',
+                type: markerContentToType[x.key as string] ?? t('unknown'),
             } as ContentType)
         ));
 
@@ -257,7 +265,7 @@ export const MyMapContainer = () => {
             (x) => ({
                 key: x.key as string,
                 value: x.value as number,
-                type: markerContentToType[x.key as string] ?? 'Unknown',
+                type: markerContentToType[x.key as string] ?? t('unknown'),
             } as ContentType)
         ));
     });
@@ -326,6 +334,26 @@ export const MyMapContainer = () => {
             >
                 <MenuIcon />
             </IconButton>
+
+            <SpeedDial
+                ariaLabel="SpeedDial playground example"
+                sx={{ 
+                    ...(drawerOpen && { display: 'none' }),
+                    position: 'absolute',
+                    bottom: '20px',
+                    right: '20px',
+                    padding: '10px',
+                    zIndex: '400',
+                }}
+                icon={<SettingsIcon />}
+            >
+                <SpeedDialAction
+                    key={'lang'}
+                    icon={<GTranslateIcon />}
+                    tooltipTitle={t('settings.language')}
+                    onClick={() => {}}
+                />
+            </SpeedDial>
             <MapContainer
                 className='z-0'
                 center={center}

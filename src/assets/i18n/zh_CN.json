@@ -1,0 +1,18 @@
+{
+    "translation": {
+        "unknown": "未知",
+        "settings": {
+            "language": "语言"
+        },
+        "markerType": {
+            "gatheringMineral": "采集 - 矿物",
+            "gatheringPlant": "采集 - 植物",
+            "gatheringAquatic": "采集 - 水生",
+            "treasureBox": "宝箱",
+            "treasureBoxLM": "宝箱 - 液体记忆",
+            "treasureBoxAB": "宝箱 - 冒险板",
+            "freeBuff": "免费增益",
+            "warpPoint": "传送点"
+        }
+    }
+}

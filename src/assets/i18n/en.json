@@ -1,0 +1,18 @@
+{
+    "translation": {
+        "unknown": "Unknown",
+        "settings": {
+            "language": "Language"
+        },
+        "markerType": {
+            "gatheringMineral": "Gathering - Mineral",
+            "gatheringPlant": "Gathering - Plant",
+            "gatheringAquatic": "Gathering - Aquatic",
+            "treasureBox": "Treasure Box",
+            "treasureBoxLM": "Treasure Box - Liquid Memory",
+            "treasureBoxAB": "Treasure Box - Adventure Board",
+            "freeBuff": "Free Buff",
+            "warpPoint": "Warp Point"
+        }
+    }
+}
