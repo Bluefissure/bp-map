@@ -16,7 +16,8 @@
             "treasureBoxLM": "Treasure Box - Liquid Memory",
             "treasureBoxAB": "Treasure Box - Adventure Board",
             "freeBuff": "Free Buff",
-            "warpPoint": "Warp Point"
+            "warpPoint": "Warp Point",
+            "nappo": "Nappo"
         },
         "drawer": {
             "map": "Map",

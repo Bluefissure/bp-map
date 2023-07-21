@@ -254,12 +254,19 @@ def gen_warp_points(sc_file):
 		result['Data'] = get_warppoint_text(wp_id)
 	return results
 
+def gen_nappos(sc_file):
+	results = get_positions("ProfileData", "BP_NpcSpawnPoint_NappoTraverse_C", sc_file)
+	# populate results
+	print(results)
+	return results
+
 def analysis_sc_file(zone_id, sc_file):
 	global OUTPUT_DATA
-	gen_pu_elements_func = {
+	gen_sc_elements_func = {
 		'WarpPoints': gen_warp_points,
+		'Nappos': gen_nappos,
 	}
-	for (keyword, func) in gen_pu_elements_func.items():
+	for (keyword, func) in gen_sc_elements_func.items():
 		OUTPUT_DATA[zone_id][keyword] += func(sc_file)
 
 def analysis_pu_file(zone_id, pu_file):

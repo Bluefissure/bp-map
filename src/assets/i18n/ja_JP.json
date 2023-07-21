@@ -16,7 +16,8 @@
             "treasureBoxLM": "宝箱 - リキッドメモリー",
             "treasureBoxAB": "宝箱 - アドベンチャーボード",
             "freeBuff": "放浪の美食屋",
-            "warpPoint": "転移ポータル"
+            "warpPoint": "転移ポータル",
+            "nappo": "ハッピーナッポ"
         },
         "drawer": {
             "map": "マップ",
