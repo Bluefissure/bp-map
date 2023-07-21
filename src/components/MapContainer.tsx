@@ -373,6 +373,7 @@ export const MyMapContainer = () => {
                                 >
                                     <MenuItem value={'en'}>English</MenuItem>
                                     <MenuItem value={'zh_CN'}>Chinese Simplified</MenuItem>
+                                    <MenuItem value={'ja_JP'}>Japanese</MenuItem>
                                 </Select>
                             </FormControl>
                             <FormControl sx={{ m: 1, minWidth: 200 }}>
