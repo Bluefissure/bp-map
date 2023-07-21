@@ -44,6 +44,7 @@ import AreaFld01 from '../assets/area/UI_MapArea_Fld01.webp';
 import AreaFld02 from '../assets/area/UI_MapArea_Fld02.webp';
 import AreaFld03 from '../assets/area/UI_MapArea_Fld03.webp';
 import AreaFld04 from '../assets/area/UI_MapArea_Fld04.webp';
+import { useStateWithLS } from '../customHooks/useStateWithLS';
 
 interface setBooleanFunc {
     (value: boolean): void;
@@ -148,7 +149,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
     // Generate marker selector
     const markerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
     const contentTypes = props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? [];
-    const [filteredOutTypes, setFilteredOutTypes] = useState([] as string[]);
+    const [filteredOutTypes, setFilteredOutTypes] = useStateWithLS('filteredOutMarkerTypes', [] as string[]);
     const [filteredContentTypes, setFilteredContentTypes] = useState([] as ContentType[]);
 
     useEffect(() => {

@@ -53,6 +53,7 @@ import {
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
 import i18n from '../i18n';
+import { useStateWithLS } from '../customHooks/useStateWithLS';
 
 
 export const MyMapContainer = () => {
@@ -61,7 +62,7 @@ export const MyMapContainer = () => {
     const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
     const zoneIdParam = searchParams.get('zone_id');
-    const [zoneId, setZoneId] = useState(zoneIdParam ?? 'fld001');
+    const [zoneId, setZoneId] = useStateWithLS('zoneId', zoneIdParam ?? 'fld001');
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [langDialogOpen, setLangDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
