@@ -15,7 +15,7 @@ module.exports = (env) => {
     },
     mode,
     output: {
-      filename: '[name].entry.js',
+      filename: '[chunkhash].[name].entry.js',
       path: path.resolve(__dirname, 'public/'),
     },
     optimization: {
