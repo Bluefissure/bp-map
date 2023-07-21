@@ -11,7 +11,7 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
-import { MapMarker, MapTreasure, MapContent, MapFreeBuff, MapWarpPoint } from '../types/MapMarker';
+import { MapMarker, MapTreasure, MapContent, MapFreeBuff, MapWarpPoint, MapNappo } from '../types/MapMarker';
 import { ContentType } from './MapDrawer';
 
 import {
@@ -49,6 +49,7 @@ import {
     TreasureABIcons,
     FreeBuffIcon,
     WarpPointIcon,
+    NappoIcon,
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
 import i18n from '../i18n';
@@ -92,6 +93,7 @@ export const MyMapContainer = () => {
     const treasureBoxes = zoneMetaMap[zoneId].treasureBoxes ?? [];
     const freeBuffs = zoneMetaMap[zoneId].freeBuffs ?? [];
     const warpPoints = zoneMetaMap[zoneId].warpPoints ?? [];
+    const nappos = zoneMetaMap[zoneId].nappos ?? [];
     const bgConfig: {
         [key: string]: ZoneConfig
     } = bgConfigJson;
@@ -221,8 +223,27 @@ export const MyMapContainer = () => {
         } as MapMarker;
     });
 
+    const npMarkers = nappos.map((np) => {
+        const position = calcMapPosition(np.RelativeLocation, zoneConfig, mapSize);
+        const markerType = t('markerType.nappo');
+        const icon = NappoIcon;
+        return {
+            key: np.ProfileDataKey,
+            dataType: 'Nappo',
+            zIndex: 2,
+            markerType: markerType,
+            position,
+            icon,
+            content: {
+                type: 'Nappo',
+                key: np.ProfileDataKey,
+                name: '',
+            } as MapNappo,
+        } as MapMarker;
+    });
 
-    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers, ...wpMarkers] as MapMarker[];
+
+    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers, ...wpMarkers, ...npMarkers] as MapMarker[];
     const markerTypeIconMap = {} as {[key:string]: string};
     markers.forEach((marker) => {
         let iconUrl = marker.icon.options.iconUrl;
@@ -244,6 +265,8 @@ export const MyMapContainer = () => {
         } else {
             if (marker.dataType === 'WarpPoint') {
                 return [(marker.content as MapWarpPoint).name];
+            } else if (marker.dataType === 'Nappo') {
+                return [(marker.content as MapNappo).name];
             }
         }
         return [];
@@ -273,7 +296,7 @@ export const MyMapContainer = () => {
         return updateMarkerContentToType(markers);
     }, [cf, markers]);
     const [contentDimGroupAll, setContentDimGroupAll] = useState(
-        contentDim.group().all().map(
+        contentDim.group().all().filter((x) => (x.key)).map(
             (x) => ({
                 key: x.key as string,
                 value: x.value as number,
@@ -288,7 +311,7 @@ export const MyMapContainer = () => {
 
     cf.onChange(() => {
         setFilteredMarkers(cf.allFiltered());
-        setContentDimGroupAll(contentDim.group().all().map(
+        setContentDimGroupAll(contentDim.group().all().filter((x) => (x.key)).map(
             (x) => ({
                 key: x.key as string,
                 value: x.value as number,

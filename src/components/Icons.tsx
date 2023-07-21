@@ -9,6 +9,7 @@ import TreasureIconImg from '../assets/icon/Map/treasurebox.webp';
 import TreasureLMIconImg from '../assets/icon/LiquidMemory/UI_LiquidMemoryListLvOn.webp';
 import FreeBuffIconImg from '../assets/icon/Map/UI_Map_95.webp';
 import WarpPointIconImg from '../assets/icon/Map/UI_Map_12.webp';
+import NappoIconImg from '../assets/icon/HappyNappo/UI_HappyNappoIconInteract.webp';
 
 const ICON_SIZE = 36;
 const ICON_SIZE_SMALL = 24;
@@ -64,6 +65,13 @@ export const FreeBuffIcon = L.icon({
 
 export const WarpPointIcon = L.icon({
     iconUrl: WarpPointIconImg,
+    iconSize: [ICON_SIZE, ICON_SIZE],
+    iconAnchor: [ICON_SIZE / 2, ICON_SIZE / 2],
+    popupAnchor: [0, - ICON_SIZE / 2],
+});
+
+export const NappoIcon = L.icon({
+    iconUrl: NappoIconImg,
     iconSize: [ICON_SIZE, ICON_SIZE],
     iconAnchor: [ICON_SIZE / 2, ICON_SIZE / 2],
     popupAnchor: [0, - ICON_SIZE / 2],

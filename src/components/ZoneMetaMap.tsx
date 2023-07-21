@@ -53,6 +53,11 @@ import fbFld002 from '../assets/data/fld002/FreeBuffs.json';
 import fbFld003 from '../assets/data/fld003/FreeBuffs.json';
 import fbFld004 from '../assets/data/fld004/FreeBuffs.json';
 
+import npFld001 from '../assets/data/fld001/Nappos.json';
+import npFld002 from '../assets/data/fld002/Nappos.json';
+import npFld003 from '../assets/data/fld003/Nappos.json';
+import npFld004 from '../assets/data/fld004/Nappos.json';
+
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
 export const zoneMetaMap : ZoneMetaMap = {
@@ -73,6 +78,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpFld001,
         treasureBoxes: trFld001,
         freeBuffs: fbFld001,
+        nappos: npFld001,
     },
     fld002: {
         bgFile: mapFld002,
@@ -81,6 +87,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpFld002,
         treasureBoxes: trFld002,
         freeBuffs: fbFld002,
+        nappos: npFld002,
     },
     fld003: {
         bgFile: mapFld003,
@@ -89,6 +96,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpFld003,
         treasureBoxes: trFld003,
         freeBuffs: fbFld003,
+        nappos: npFld003,
     },
     fld004: {
         bgFile: mapFld004,
@@ -97,6 +105,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpFld004,
         treasureBoxes: trFld004,
         freeBuffs: fbFld004,
+        nappos: npFld004,
     },
     dng007: {
         bgFile: mapDng007,

@@ -3,6 +3,7 @@ import { WarpPoint } from './WarpPoint';
 import { GatherPoint } from './GatherPoint';
 import { TreasureBox } from './TreasureBox';
 import { FreeBuff } from './FreeBuff';
+import { Nappo } from './Nappo';
 
 export type ZoneName = {
     ja_JP: string;
@@ -18,6 +19,7 @@ export type ZoneMetaMap = {
         gatherPoints?: GatherPoint[];
         treasureBoxes?: TreasureBox[];
         freeBuffs?: FreeBuff[];
+        nappos?: Nappo[];
         name?: ZoneName;
     };
 };

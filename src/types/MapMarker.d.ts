@@ -21,12 +21,17 @@ export interface MapWarpPoint {
     key: string;
     name: string;
 }
+export interface MapNappo {
+    type: 'Nappo';
+    key: string;
+    name: string;
+}
 export interface MapBoss {
     type: 'Boss';
     key: string;
 }
 
-export type MapContent = MapTreasure[] | MapFreeBuff[] | MapWarpPoint;
+export type MapContent = MapTreasure[] | MapFreeBuff[] | MapWarpPoint | MapNappo;
 
 export type MapMarker = {
     key: string,
