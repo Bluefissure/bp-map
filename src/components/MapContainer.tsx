@@ -67,6 +67,10 @@ export const MyMapContainer = () => {
     const [dataLang, setDataLang] = useState('ja_JP');
 
     useEffect(() => {
+        document.title = 'Blue Protocol Interactive Map';
+    }, []);
+
+    useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
         const zoneIdParam = searchParams.get('zone_id');
         if (zoneIdParam && zoneId != zoneIdParam) {
