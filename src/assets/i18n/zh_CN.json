@@ -2,7 +2,11 @@
     "translation": {
         "unknown": "未知",
         "settings": {
-            "language": "语言"
+            "language": {
+                "language": "语言",
+                "ui": "界面",
+                "data": "数据"
+            }
         },
         "markerType": {
             "gatheringMineral": "采集 - 矿物",
@@ -13,6 +17,15 @@
             "treasureBoxAB": "宝箱 - 冒险板",
             "freeBuff": "免费增益",
             "warpPoint": "传送点"
+        },
+        "drawer": {
+            "map": "地图",
+            "marker": "标记",
+            "search": "搜索",
+            "item": "物品",
+            "city": "城市",
+            "field": "野外",
+            "explore": "探索"
         }
     }
 }

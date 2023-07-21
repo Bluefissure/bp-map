@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import crossfilter from 'crossfilter2';
+import { useTranslation } from 'react-i18next';
 
 import { zoneMetaMap } from './ZoneMetaMap';
 
@@ -70,6 +71,7 @@ interface MapDrawerProps {
 }
 
 export const MapDrawer = (props: MapDrawerProps) => {
+    const { t } = useTranslation();
     const [tabValue, setTabValue] = useState(0);
     const {drawerOpen, setDrawerOpen, setZoneId} = props;
     const [zoneSwitchOpen, setZoneSwitchOpen] = useState(true);
@@ -195,15 +197,15 @@ export const MapDrawer = (props: MapDrawerProps) => {
                     <ListItemIcon>
                         <MapIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Map" />
+                    <ListItemText primary={t('drawer.map')} />
                     {zoneSwitchOpen ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
                 <Collapse in={zoneSwitchOpen} timeout="auto">
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
-                            <Tab label="Cities" {...a11yProps(0)} />
-                            <Tab label="Fields" {...a11yProps(1)} />
-                            <Tab label="Explores" {...a11yProps(2)} />
+                            <Tab label={t('drawer.city')} {...a11yProps(0)} />
+                            <Tab label={t('drawer.field')} {...a11yProps(1)} />
+                            <Tab label={t('drawer.explore')} {...a11yProps(2)} />
                         </Tabs>
                     </Box>
                     <CustomTabPanel value={tabValue} index={0}>
@@ -257,7 +259,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                     <ListItemIcon>
                         <RoomIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Marker" />
+                    <ListItemText primary={t('drawer.marker')} />
                     {typePanelOpen ? <ExpandLess /> : <ExpandMore />}
                 </ListItemButton>
                 <Collapse in={typePanelOpen} timeout="auto">
@@ -305,8 +307,8 @@ export const MapDrawer = (props: MapDrawerProps) => {
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
-                                        label="Search"
-                                        placeholder="Items"
+                                        label={t('drawer.search')}
+                                        placeholder={t('drawer.item')}
                                     />
                                 )}
                             />

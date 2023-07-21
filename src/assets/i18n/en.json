@@ -2,7 +2,11 @@
     "translation": {
         "unknown": "Unknown",
         "settings": {
-            "language": "Language"
+            "language": {
+                "language": "Language",
+                "ui": "UI",
+                "data": "Data"
+            }
         },
         "markerType": {
             "gatheringMineral": "Gathering - Mineral",
@@ -13,6 +17,15 @@
             "treasureBoxAB": "Treasure Box - Adventure Board",
             "freeBuff": "Free Buff",
             "warpPoint": "Warp Point"
+        },
+        "drawer": {
+            "map": "Map",
+            "marker": "Marker",
+            "search": "Search",
+            "item": "Items",
+            "city": "Cities",
+            "field": "Fields",
+            "explore": "Explores"
         }
     }
 }

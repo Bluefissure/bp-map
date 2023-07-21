@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import crossfilter from 'crossfilter2';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
@@ -19,9 +19,22 @@ import {
     SpeedDial,
     SpeedDialAction,
     IconButton,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    OutlinedInput,
+    Stack,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
 
 import {
@@ -44,10 +57,14 @@ import i18n from '../i18n';
 export const MyMapContainer = () => {
     const { t } = useTranslation();
     const location = useLocation();
+    const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
     const zoneIdParam = searchParams.get('zone_id');
     const [zoneId, setZoneId] = useState(zoneIdParam ?? 'fld001');
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [langDialogOpen, setLangDialogOpen] = useState(false);
+    const [uiLang, setUILang] = useState(i18n.language);
+    const [dataLang, setDataLang] = useState('ja_JP');
 
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
@@ -318,6 +335,65 @@ export const MyMapContainer = () => {
     };
     return (
         <Box>
+            <Dialog
+                disableEscapeKeyDown
+                open={langDialogOpen}
+                onClose={() => {setLangDialogOpen(false);}}
+            >
+                <DialogTitle>
+                    <Trans i18nKey={'settings.language.language'}>
+                        Language
+                    </Trans>
+                </DialogTitle>
+                <DialogContent>
+                    <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                        <Stack>
+                            <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                <InputLabel id="ui-lang-select-label">
+                                    <Trans i18nKey={'settings.language.ui'}>
+                                    UI
+                                    </Trans>
+                                </InputLabel>
+                                <Select
+                                    labelId="ui-lang-select-label"
+                                    id="ui-lang-select"
+                                    value={uiLang}
+                                    onChange={(e) => {setUILang(e.target.value);}}
+                                    input={<OutlinedInput label="UI" id="ui-lang" />}
+                                >
+                                    <MenuItem value={'en'}>English</MenuItem>
+                                    <MenuItem value={'zh_CN'}>Chinese Simplified</MenuItem>
+                                </Select>
+                            </FormControl>
+                            <FormControl sx={{ m: 1, minWidth: 200 }}>
+                                <InputLabel id="data-lang-select-label">
+                                    <Trans i18nKey={'settings.language.data'}>
+                                    Data
+                                    </Trans>
+                                </InputLabel>
+                                <Select
+                                    labelId="data-lang-select-label"
+                                    id="data-lang-select"
+                                    value={dataLang}
+                                    onChange={(e) => {setDataLang(e.target.value);}}
+                                    input={<OutlinedInput label="Data" />}
+                                >
+                                    <MenuItem value={'ja_JP'}>Japanese</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Stack>
+                        
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {setLangDialogOpen(false);}}>Cancel</Button>
+                    <Button onClick={() => {
+                        i18n.changeLanguage(uiLang).then(() => {
+                            navigate(0);
+                        }).catch((e) => {console.error(e);});
+                    }}>Ok</Button>
+                </DialogActions>
+            </Dialog>
             <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -345,13 +421,18 @@ export const MyMapContainer = () => {
                     padding: '10px',
                     zIndex: '400',
                 }}
-                icon={<SettingsIcon />}
+                icon={
+                    <SpeedDialIcon
+                        openIcon={<SettingsOutlinedIcon />}
+                        icon={<SettingsIcon />}
+                    />
+                }
             >
                 <SpeedDialAction
                     key={'lang'}
                     icon={<GTranslateIcon />}
-                    tooltipTitle={t('settings.language')}
-                    onClick={() => {}}
+                    tooltipTitle={t('settings.language.language')}
+                    onClick={() => {setLangDialogOpen(!langDialogOpen);}}
                 />
             </SpeedDial>
             <MapContainer
