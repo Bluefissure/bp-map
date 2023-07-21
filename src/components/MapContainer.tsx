@@ -237,23 +237,6 @@ export const MyMapContainer = () => {
 
     const cf = useMemo(() => crossfilter(markers), [markers, zoneId]);
     const markerTypeDim = useMemo(() => (cf.dimension((marker) => marker.markerType)), [cf]);
-    const markerContentToType = useMemo(() => {
-        const tempDict = {} as {[key: string]: string};
-        markers.forEach((marker) => {
-            const content = marker.content;
-            if (Array.isArray(content)) {
-                content.forEach((ele) => {
-                    tempDict[ele.name] = marker.markerType;
-                })
-                return content.map((ele) => (ele.name));
-            } else {
-                if (marker.dataType === 'WarpPoint') {
-                    tempDict[(marker.content as MapWarpPoint).name] = marker.markerType;
-                }
-            }
-        })
-        return tempDict;
-    }, [cf]);
     const contentDim = useMemo(() => (cf.dimension((marker) => {
         const content = marker.content;
         if (Array.isArray(content)) {
@@ -266,12 +249,35 @@ export const MyMapContainer = () => {
         return [];
     }, true)), [cf]);
     const [filteredMarkers, setFilteredMarkers] = useState(cf.allFiltered());
+    const updateMarkerContentToType = (_markers: MapMarker[]) => {
+        const tempDict = {} as {[key: string]: string[]};
+        _markers.forEach((marker) => {
+            const content = marker.content;
+            if (Array.isArray(content)) {
+                content.forEach((ele) => {
+                    tempDict[ele.name] = [...new Set([
+                        ...(tempDict[ele.name] ?? []),
+                        marker.markerType,
+                    ])];
+                })
+                return content.map((ele) => (ele.name));
+            } else {
+                if (marker.dataType === 'WarpPoint') {
+                    tempDict[(marker.content as MapWarpPoint).name] = [marker.markerType];
+                }
+            }
+        });
+        return tempDict;
+    }
+    const markerContentToType = useMemo(() => {
+        return updateMarkerContentToType(markers);
+    }, [cf, markers]);
     const [contentDimGroupAll, setContentDimGroupAll] = useState(
         contentDim.group().all().map(
             (x) => ({
                 key: x.key as string,
                 value: x.value as number,
-                type: markerContentToType[x.key as string] ?? t('unknown'),
+                types: markerContentToType[x.key as string] ?? [t('unknown')],
             } as ContentType)
         ));
 
@@ -286,7 +292,7 @@ export const MyMapContainer = () => {
             (x) => ({
                 key: x.key as string,
                 value: x.value as number,
-                type: markerContentToType[x.key as string] ?? t('unknown'),
+                types: markerContentToType[x.key as string] ?? [t('unknown')],
             } as ContentType)
         ));
     });

@@ -8,7 +8,7 @@ import en from './assets/i18n/en.json';
 import zh_CN from './assets/i18n/zh_CN.json';
 
 const initConfig = {
-    debug: true,
+    debug: false,
     fallbackLng: 'en',
     interpolation: {
         escapeValue: false, // not needed for react as it escapes by default
@@ -18,7 +18,6 @@ const initConfig = {
         zh_CN: zh_CN,
     }
 };
-console.log(initConfig);
 
 i18n
     // detect user language

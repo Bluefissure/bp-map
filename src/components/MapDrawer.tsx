@@ -56,7 +56,7 @@ interface setStringFunc {
 export type ContentType = {
     key: string,
     value: number,
-    type: string,
+    types: string[],
 };
 
 interface MapDrawerProps {
@@ -294,13 +294,17 @@ export const MapDrawer = (props: MapDrawerProps) => {
                             <Autocomplete
                                 multiple
                                 id="tags-standard"
-                                options={contentTypes.sort((x, y) =>
-                                    (x.type < y.type) ? -1 : ((x.type > y.type) ? 1 : 0)
-                                )}
+                                options={contentTypes.sort((x, y) => {
+                                    const xType = x.types[0];
+                                    const yType = y.types[0];
+                                    return (xType < yType) ? -1 : ((xType > yType) ? 1 : 0)
+                                })}
                                 getOptionLabel={(option) => option.key}
                                 onChange={onItemSearchChange}
                                 value={filteredContentTypes}
-                                groupBy={(option) => option.type}
+                                groupBy={(option) => (
+                                    option.types.filter((tp) => (filteredOutTypes.indexOf(tp) === -1))[0]
+                                )}
                                 isOptionEqualToValue={
                                     (option, value) => (option.key === value.key)
                                 }
