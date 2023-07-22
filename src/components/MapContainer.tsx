@@ -423,8 +423,9 @@ export const MyMapContainer = () => {
                 );
             } else if (dataType === 'Boss') {
                 const header = (<div className='font-extrabold'>{content.name}</div>);
-                const minLv = (content as MapBoss).data?.members[0].MinLv ?? 0;
-                const maxLv = (content as MapBoss).data?.members[0].MaxLv ?? 0;
+                const member = (content as MapBoss).data?.members[0];
+                const minLv = member?.MinLv ?? 0;
+                const maxLv = member?.MaxLv ?? 0;
                 let lvStr = `Lv.${minLv}`;
                 if (maxLv !== minLv) {
                     lvStr += `~${maxLv}`;
@@ -525,6 +526,28 @@ export const MyMapContainer = () => {
                             />
                             {conditionsDom}
                         </div>
+                        <div className='mb-2'>
+                            <Trans
+                                i18nKey={'bossCondition.drops'}
+                                defaults="Drops:"
+                            />
+                            {member?.Drops.filter((drop) => (drop.name)).sort(
+                                (x, y) => (y.drop_rate - x.drop_rate)).map(
+                                (drop, idx) => (
+                                    <div className="flex justify-between items-center" key={`habi-drop-${idx}`}>
+                                        <div>
+                                            {drop.name?.ja_JP}
+                                        </div>
+                                        <div className="space-x-4">
+                                            <span> </span>
+                                            <span> </span>
+                                        </div>
+                                        <div >
+                                            {`${Math.floor(drop.drop_rate / 100)}%`}
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
                     </>
                 );
             } else if (dataType === 'Habitat') {
@@ -559,7 +582,6 @@ export const MyMapContainer = () => {
                                                 </div>
                                             ))}
                                     </div>
-                                    
                                 </div>
                             );
                                 

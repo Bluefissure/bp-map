@@ -24,6 +24,7 @@
         "bossCondition": {
             "cd": "CD: {{cd}}m",
             "conditions": "Conditions:",
+            "drops": "Drops:",
             "appearsAtNight": "Appears at night",
             "appearsDuringTheDay": "Appears during the day",
             "killEnemies": "Kill {{amount}} {{enemy}}",

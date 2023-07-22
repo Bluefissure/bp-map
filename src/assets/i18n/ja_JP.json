@@ -24,6 +24,7 @@
         "bossCondition": {
             "cd": "CD: {{cd}}m",
             "conditions": "条件：",
+            "drops": "アイテム：",
             "appearsAtNight": "夜に現れる",
             "appearsDuringTheDay": "昼間に現れる",
             "killEnemies": "{{amount}} 体の {{enemy}} を倒す",
