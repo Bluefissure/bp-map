@@ -18,7 +18,8 @@
             "freeBuff": "放浪の美食屋",
             "warpPoint": "転移ポータル",
             "nappo": "ハッピーナッポ",
-            "boss": "ボス"
+            "boss": "ボス",
+            "habitat": "エネミー"
         },
         "bossCondition": {
             "cd": "CD: {{cd}}m",
@@ -34,7 +35,7 @@
             "map": "マップ",
             "marker": "マーカー",
             "search": "検索",
-            "item": "アイテム",
+            "searchHint": "アイテム/エネミー...",
             "city": "都市",
             "field": "フィールド",
             "explore": "探索"

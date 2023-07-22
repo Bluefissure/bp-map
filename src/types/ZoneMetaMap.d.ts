@@ -5,6 +5,7 @@ import { TreasureBox } from './TreasureBox';
 import { FreeBuff } from './FreeBuff';
 import { Nappo } from './Nappo';
 import { Boss } from './Boss';
+import { Habitat } from './Habitat';
 
 export type ZoneName = {
     ja_JP: string;
@@ -22,6 +23,7 @@ export type ZoneMetaMap = {
         freeBuffs?: FreeBuff[];
         nappos?: Nappo[];
         bosses?: Boss[];
+        habitats?: Habitat[];
         name?: ZoneName;
     };
 };

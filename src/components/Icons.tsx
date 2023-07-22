@@ -11,6 +11,7 @@ import FreeBuffIconImg from '../assets/icon/Map/UI_Map_95.webp';
 import WarpPointIconImg from '../assets/icon/Map/UI_Map_12.webp';
 import NappoIconImg from '../assets/icon/HappyNappo/UI_HappyNappoIconInteract.webp';
 import BossIconImg from '../assets/icon/Map/UI_Map_04.webp';
+import HabitatIconImg from '../assets/icon/Map/UI_Map_16.webp';
 
 const ICON_SIZE = 36;
 const ICON_SIZE_LARGE = 48;
@@ -95,6 +96,13 @@ export const TreasureLMIcon = L.icon({
 
 export const BossIcon = L.icon({
     iconUrl: BossIconImg,
+    iconSize: [ICON_SIZE_LARGE, ICON_SIZE_LARGE],
+    iconAnchor: [ICON_SIZE_LARGE / 2, ICON_SIZE_LARGE / 2],
+    popupAnchor: [0, - ICON_SIZE_LARGE / 2],
+});
+
+export const HabitatIcon = L.icon({
+    iconUrl: HabitatIconImg,
     iconSize: [ICON_SIZE_LARGE, ICON_SIZE_LARGE],
     iconAnchor: [ICON_SIZE_LARGE / 2, ICON_SIZE_LARGE / 2],
     popupAnchor: [0, - ICON_SIZE_LARGE / 2],

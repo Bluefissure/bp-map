@@ -1,6 +1,7 @@
 import * as L from 'leaflet';
 import { LatLng } from 'leaflet';
 import { BossData, QuestData } from './Boss';
+import { HabitatData } from './Habitat';
 
 export interface MapTreasure {
     type: 'Treasure';
@@ -34,8 +35,19 @@ export interface MapBoss {
     data?: BossData;
     questData?: QuestData;
 }
+export interface MapHabitat {
+    type: 'Habitat';
+    key: string;
+    name?: string;
+    data?: HabitatData;
+}
 
-export type MapContent = MapTreasure[] | MapFreeBuff[] | MapWarpPoint | MapNappo | MapBoss;
+export type MapContent = MapTreasure[]
+    | MapFreeBuff[]
+    | MapWarpPoint
+    | MapNappo
+    | MapBoss
+    | MapHabitat;
 
 export type MapMarker = {
     key: string,

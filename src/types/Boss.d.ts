@@ -1,10 +1,17 @@
 import { RelativeLocation, TextEntry } from "./GatherPoint";
 
+export type Drop = {
+    id: number;
+    drop_rate: number;
+    name?: TextEntry;
+}
+
 export type Enemy = {
     EnemyId: string;
     MinLv: number;
     MaxLv: number;
     Name: TextEntry;
+    Drops: Drop[];
 }
 
 export type BossData = {

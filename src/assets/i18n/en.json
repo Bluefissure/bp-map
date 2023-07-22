@@ -18,7 +18,8 @@
             "freeBuff": "Free Buff",
             "warpPoint": "Warp Point",
             "nappo": "Nappo",
-            "boss": "Boss"
+            "boss": "Boss",
+            "habitat": "Enemy"
         },
         "bossCondition": {
             "cd": "CD: {{cd}}m",
@@ -34,7 +35,7 @@
             "map": "Map",
             "marker": "Marker",
             "search": "Search",
-            "item": "Items",
+            "searchHint": "Items/Enemies...",
             "city": "Cities",
             "field": "Fields",
             "explore": "Explores"

@@ -313,7 +313,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                                     <TextField
                                         {...params}
                                         label={t('drawer.search')}
-                                        placeholder={t('drawer.item')}
+                                        placeholder={t('drawer.searchHint')}
                                     />
                                 )}
                             />

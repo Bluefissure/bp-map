@@ -70,6 +70,17 @@ import bossPat0801 from '../assets/data/pat0801/Bosses.json';
 import bossPat0802 from '../assets/data/pat0802/Bosses.json';
 import bossPat0803 from '../assets/data/pat0803/Bosses.json';
 
+import habiFld001 from '../assets/data/fld001/Habitats.json';
+import habiFld002 from '../assets/data/fld002/Habitats.json';
+import habiFld003 from '../assets/data/fld003/Habitats.json';
+import habiFld004 from '../assets/data/fld004/Habitats.json';
+import habiDng007 from '../assets/data/dng007/Habitats.json';
+import habiDng009 from '../assets/data/dng009/Habitats.json';
+import habiPat0201 from '../assets/data/pat0201/Habitats.json';
+import habiPat0801 from '../assets/data/pat0801/Habitats.json';
+import habiPat0802 from '../assets/data/pat0802/Habitats.json';
+import habiPat0803 from '../assets/data/pat0803/Habitats.json';
+
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
 export const zoneMetaMap : ZoneMetaMap = {
@@ -92,6 +103,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         freeBuffs: fbFld001,
         nappos: npFld001,
         bosses: bossFld001,
+        habitats: habiFld001,
     },
     fld002: {
         bgFile: mapFld002,
@@ -102,6 +114,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         freeBuffs: fbFld002,
         nappos: npFld002,
         bosses: bossFld002,
+        habitats: habiFld002,
     },
     fld003: {
         bgFile: mapFld003,
@@ -112,6 +125,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         freeBuffs: fbFld003,
         nappos: npFld003,
         bosses: bossFld003,
+        habitats: habiFld003,
     },
     fld004: {
         bgFile: mapFld004,
@@ -122,6 +136,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         freeBuffs: fbFld004,
         nappos: npFld004,
         bosses: bossFld004,
+        habitats: habiFld004,
     },
     dng007: {
         bgFile: mapDng007,
@@ -130,6 +145,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpDng007,
         treasureBoxes: trDng007,
         bosses: bossDng007,
+        habitats: habiDng007,
         name: {
             ja_JP: '枷神の産屋',
         }
@@ -141,6 +157,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpDng009,
         treasureBoxes: trDng009,
         bosses: bossDng009,
+        habitats: habiDng009,
         name: {
             ja_JP: '巨竜の爪痕',
         }
@@ -152,6 +169,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpPat0201,
         treasureBoxes: trPat0201,
         bosses: bossPat0201,
+        habitats: habiPat0201,
         name: {
             ja_JP: 'ボルオム遺跡',
         }
@@ -163,6 +181,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpPat0801,
         treasureBoxes: trPat0801,
         bosses: bossPat0801,
+        habitats: habiPat0801,
         name: {
             ja_JP: '木漏れ日射す林道',
         }
@@ -174,6 +193,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpPat0802,
         treasureBoxes: trPat0802,
         bosses: bossPat0802,
+        habitats: habiPat0802,
         name: {
             ja_JP: 'ともし火の森',
         }
@@ -185,6 +205,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         gatherPoints: gpPat0803,
         treasureBoxes: trPat0803,
         bosses: bossPat0803,
+        habitats: habiPat0803,
         name: {
             ja_JP: '雨止まぬ森',
         }

@@ -18,7 +18,8 @@
             "freeBuff": "免费增益",
             "warpPoint": "传送点",
             "nappo": "快乐纳波",
-            "boss": "首领"
+            "boss": "首领",
+            "habitat": "怪物"
         },
         "bossCondition": {
             "cd": "冷却: {{cd}}m",
@@ -34,7 +35,7 @@
             "map": "地图",
             "marker": "标记",
             "search": "搜索",
-            "item": "物品",
+            "searchHint": "物品/怪物...",
             "city": "城市",
             "field": "野外",
             "explore": "探索"

@@ -11,7 +11,7 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
-import { MapMarker, MapTreasure, MapFreeBuff, MapWarpPoint, MapNappo, MapBoss } from '../types/MapMarker';
+import { MapMarker, MapTreasure, MapFreeBuff, MapWarpPoint, MapNappo, MapBoss, MapHabitat } from '../types/MapMarker';
 import { ContentType } from './MapDrawer';
 
 import {
@@ -51,6 +51,7 @@ import {
     WarpPointIcon,
     NappoIcon,
     BossIcon,
+    HabitatIcon,
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
 import i18n from '../i18n';
@@ -97,6 +98,7 @@ export const MyMapContainer = () => {
     const warpPoints = zoneMetaMap[zoneId].warpPoints ?? [];
     const nappos = zoneMetaMap[zoneId].nappos ?? [];
     const bosses = zoneMetaMap[zoneId].bosses?.filter((x) => x.Data) ?? [];
+    const habitats = zoneMetaMap[zoneId].habitats?.filter((x) => x.Data) ?? [];
     const bgConfig: {
         [key: string]: ZoneConfig
     } = bgConfigJson;
@@ -263,8 +265,36 @@ export const MyMapContainer = () => {
         } as MapMarker;
     });
 
+    const habiMarkers = habitats.map((habi) => {
+        const position = calcMapPosition(habi.RelativeLocation, zoneConfig, mapSize);
+        const markerType = t('markerType.habitat');
+        // const name = habi.Data?.members[0].Name.ja_JP;
+        return {
+            key: habi.HabitatKey,
+            dataType: 'Habitat',
+            zIndex: 1,
+            markerType: markerType,
+            position,
+            icon: HabitatIcon,
+            content: {
+                type: 'Habitat',
+                key: habi.HabitatKey,
+                name: 'Habitat',
+                data: habi.Data,
+            } as MapHabitat,
+        } as MapMarker;
+    });
 
-    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers, ...wpMarkers, ...npMarkers, ...bossMarkers] as MapMarker[];
+
+    const markers = [
+        ...gpMarkers,
+        ...trMarkers,
+        ...fbMarkers,
+        ...wpMarkers,
+        ...npMarkers,
+        ...bossMarkers,
+        ...habiMarkers,
+    ] as MapMarker[];
     const markerTypeIconMap = {} as {[key:string]: string};
     markers.forEach((marker) => {
         let iconUrl = marker.icon.options.iconUrl;
@@ -290,6 +320,10 @@ export const MyMapContainer = () => {
                 return [(marker.content as MapNappo).name];
             } else if (marker.dataType === 'Boss') {
                 return [(marker.content as MapBoss).name];
+            } else if (marker.dataType === 'Habitat') {
+                return (marker.content as MapHabitat).data?.members.map(
+                    (member) => (member.Name.ja_JP)
+                ) ?? [];
             }
         }
         return [];
@@ -312,14 +346,22 @@ export const MyMapContainer = () => {
                     tempDict[(marker.content as MapWarpPoint).name] = [marker.markerType];
                 } else if (marker.dataType === 'Boss') {
                     tempDict[(marker.content as MapBoss).name] = [marker.markerType];
+                } else if (marker.dataType === 'Habitat') {
+                    ((marker.content as MapHabitat).data?.members.map(
+                        (member) => (member.Name.ja_JP)
+                    ) ?? []).forEach((v) => {
+                        tempDict[v] = [marker.markerType];
+                    })
                 }
             }
         });
         return tempDict;
     }
+
     const markerContentToType = useMemo(() => {
         return updateMarkerContentToType(markers);
     }, [cf, markers]);
+
     const [contentDimGroupAll, setContentDimGroupAll] = useState(
         contentDim.group().all().filter((x) => (x.key)).map(
             (x) => ({
@@ -485,9 +527,48 @@ export const MyMapContainer = () => {
                         </div>
                     </>
                 );
+            } else if (dataType === 'Habitat') {
+                return (
+                    <div className="overflow-auto max-h-52">
+                        {(content as MapHabitat).data?.members.map((member, idx) => {
+                            const minLv = member.MinLv ?? 0;
+                            const maxLv = member.MaxLv ?? 0;
+                            let lvStr = `Lv.${minLv}`;
+                            if (maxLv !== minLv) {
+                                lvStr += `~${maxLv}`;
+                            }
+                            return (
+                                <div key={`habi-member-${idx}`}>
+                                    <div className='font-extrabold' key={`${content.key}_${member.EnemyId}`}>{member.Name.ja_JP}</div>
+                                    <div className='text-xs mb-1'>{lvStr}</div>
+                                    <div className='mb-2'>
+                                        {member.Drops.filter((drop) => (drop.name)).sort(
+                                            (x, y) => (y.drop_rate - x.drop_rate)).map(
+                                            (drop, idx) => (
+                                                <div className="flex justify-between items-center" key={`habi-drop-${idx}`}>
+                                                    <div>
+                                                        {drop.name?.ja_JP}
+                                                    </div>
+                                                    <div className="space-x-4">
+                                                        <span> </span>
+                                                        <span> </span>
+                                                    </div>
+                                                    <div >
+                                                        {`${Math.floor(drop.drop_rate / 100)}%`}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                    
+                                </div>
+                            );
+                                
+                        })}
+                    </div>
+                )
             }
         }
-        return '';
+        return (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
     };
 
     const renderedMarkers = filteredMarkers.map((marker) => {

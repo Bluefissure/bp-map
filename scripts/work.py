@@ -64,6 +64,7 @@ def get_apiext_enemy_params():
 		stored_item = {
 			'id': _id,
 			'name': enemy['name_id'],
+			'drop_items': enemy['drop_items'],
 		}
 		APIEXT_DATA['enemyparams'][_id] = stored_item
 	return APIEXT_DATA['enemyparams']
@@ -77,6 +78,24 @@ def get_enemy_name(enemy_id):
 		return {}
 	return OUTPUT_TEXT['enemyparam_text'][enemy_name_id]
 
+def get_enemy_drops(enemy_id):
+	global OUTPUT_TEXT
+	enemyparams = get_apiext_enemy_params()
+	enemy = enemyparams.get(enemy_id, {})
+	enemy_drop_items = enemy.get('drop_items', [])
+	drops = []
+	for drop in enemy_drop_items:
+		item = {
+			'content_id': drop['content_id'],
+			'id': drop['item_index'],
+			'drop_rate': drop['drop_rate'],
+		}
+		item_name = get_item_text(drop['item_index'])
+		if drop['type'] == 0 and item_name:
+			item['name'] = item_name
+		drops.append(item)
+	return drops
+
 def load_pak_enemysets():
 	global PAK_DATA
 	es_file = os.path.join(PAK_PATH, 'Content', 'Blueprints', 'Manager', 'EnemySet', 'EnemySet_field.json')
@@ -87,15 +106,14 @@ def load_pak_enemysets():
 		members = []
 		for member in es['Members']:
 			m_id = member['EnemyId']
-			# if m_id == 'E013_00_02_01001':
-			# 	print(json.dumps(es))
-			# 	exit(1)
 			m_name = get_enemy_name(m_id)
+			m_drops = get_enemy_drops(m_id)
 			members.append({
 				'EnemyId': m_id,
 				'MinLv': member['MinLv'],
 				'MaxLv': member['MaxLv'],
 				'Name': m_name,
+				'Drops': m_drops,
 			})
 		PAK_DATA["EnemySet"][es_id] = {
 			'id': es_id,
@@ -321,6 +339,11 @@ def get_boss_data(quest_id):
 	boss_es = PAK_DATA['EnemySet'][es_id]
 	return [boss_es, quest]
 
+def get_habitat_data(es_id):
+	global PAK_DATA
+	habitat_es = PAK_DATA['EnemySet'].get(es_id, {})
+	return habitat_es
+
 
 def get_positions(category, entry_type, file):
 	with codecs.open(file, 'r', 'utf8') as f:
@@ -330,9 +353,13 @@ def get_positions(category, entry_type, file):
 	results = []
 	for (idx, entry) in enumerate(entry_list):
 		idx_map[idx] = entry
+	cat_tag_map = {
+		"Habitat": lambda entry: entry["Name"],
+	}
 	id_map = {
 		f"{category}Id": lambda x: x[f"{category}Id"],
 		f"{category}IdList": lambda x: x[f"{category}IdList"][0],
+		"Enemies": lambda x: x["Enemies"][0]["EnemySetId"],
 	}
 	for entry in entry_list:
 		if entry["Type"] != entry_type:
@@ -347,6 +374,8 @@ def get_positions(category, entry_type, file):
 			print(f"Cannot get id for: {json.dumps(entry, indent=2)}")
 			exit(1)
 		cat_tag = properties.get(f"{category}Tag", cat_id)
+		if category in cat_tag_map:
+			cat_tag = cat_tag_map[category](entry)
 		root_id = properties["RootComponent"]["ObjectPath"].split(".")[-1]
 		result = {
 			f"{category}Id": cat_id,
@@ -416,6 +445,18 @@ def gen_bosses(en_file):
 def gen_habitats(en_file):
 	results = get_positions("Habitat", "SBEnemyHabitat", en_file)
 	# populate results
+	for result in results:
+		es_id = result['HabitatId']
+		habitat_data = get_habitat_data(es_id)
+		if not habitat_data:
+			continue
+		# need to filter out drops that're not in this area
+		for (idx, member) in enumerate(habitat_data["members"]):
+			drops = member["Drops"]
+			new_drops = list(filter(
+				lambda drop: result["HabitatKey"].startswith(drop['content_id']), drops))
+			habitat_data["members"][idx]["Drops"] = new_drops
+		result['Data'] = habitat_data
 	return results
 
 
