@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
 
 export const useStateWithLS = <T, >(key: string, initialState: T): [T, (arg1: T) => void] => {
-    const initState = localStorage.getItem(key) === undefined
-        ? initialState
-        : JSON.parse(localStorage.getItem(key) as string) as T;
+    const initState = localStorage.getItem(key)
+        ? JSON.parse(localStorage.getItem(key) as string) as T
+        : initialState;
     const [state, _setState] = useState(initState);
     const setState = useCallback(
         (newState: unknown) => {
