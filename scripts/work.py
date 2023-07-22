@@ -9,6 +9,7 @@ APIEXT_PATH = r'D:\Code\BP\webrequest\logs\output'
 OUTPUT_PATH = r'..\src\assets'
 
 APIEXT_DATA = defaultdict(dict)
+PAK_DATA = defaultdict(dict)
 OUTPUT_TEXT = defaultdict(lambda: defaultdict(dict))
 OUTPUT_DATA = defaultdict(lambda: defaultdict(list))
 
@@ -50,6 +51,60 @@ def load_pak_text(name):
 def load_pak_texts():
 	load_pak_text('FreeBuffTypes')
 	load_pak_text('WarpPointName')
+
+def get_apiext_enemy_params():
+	global APIEXT_DATA
+	if 'enemyparams' in APIEXT_DATA:
+		return APIEXT_DATA['enemyparams']
+	ep_file = os.path.join(APIEXT_PATH, 'enemyparams.json')
+	with codecs.open(ep_file, 'r', 'utf8') as f:
+		enemies = json.load(f)
+	for enemy in enemies:
+		_id = enemy['enemy_id']
+		stored_item = {
+			'id': _id,
+			'name': enemy['name_id'],
+		}
+		APIEXT_DATA['enemyparams'][_id] = stored_item
+	return APIEXT_DATA['enemyparams']
+
+def get_enemy_name(enemy_id):
+	global OUTPUT_TEXT
+	enemyparams = get_apiext_enemy_params()
+	enemy = enemyparams.get(enemy_id, {})
+	enemy_name_id = enemy.get('name', 0)
+	if not enemy_name_id:
+		return {}
+	return OUTPUT_TEXT['enemyparam_text'][enemy_name_id]
+
+def load_pak_enemysets():
+	global PAK_DATA
+	es_file = os.path.join(PAK_PATH, 'Content', 'Blueprints', 'Manager', 'EnemySet', 'EnemySet_field.json')
+	with codecs.open(es_file, 'r', 'utf8') as f:
+		es_content = json.load(f)
+	for es in es_content[0]['Properties']['EnemySets']:
+		es_id = es['EnemySetId']
+		members = []
+		for member in es['Members']:
+			m_id = member['EnemyId']
+			# if m_id == 'E013_00_02_01001':
+			# 	print(json.dumps(es))
+			# 	exit(1)
+			m_name = get_enemy_name(m_id)
+			members.append({
+				'EnemyId': m_id,
+				'MinLv': member['MinLv'],
+				'MaxLv': member['MaxLv'],
+				'Name': m_name,
+			})
+		PAK_DATA["EnemySet"][es_id] = {
+			'id': es_id,
+			'members': members,
+		}
+
+
+def load_pak_datas():
+	load_pak_enemysets()
 
 
 def get_apiext_items():
@@ -192,20 +247,107 @@ def get_apiext_treasures():
 	return APIEXT_DATA['treasures']
 
 
+def get_apiext_challenge_quests():
+	global APIEXT_DATA
+	if 'masterchallengequest' in APIEXT_DATA:
+		return APIEXT_DATA['masterchallengequest']
+	quests_file = os.path.join(APIEXT_PATH, 'masterchallengequest.json')
+	with codecs.open(quests_file, 'r', 'utf8') as f:
+		quests_list = json.load(f)
+	for quest in quests_list:
+		_id = quest['quest_id']
+		conditions = {
+			'1': {
+				'type': quest['challenge_quest_occurrence_condition_1'],
+				'params': [quest['occurrence_condition_param_1_1']],
+			},
+			'2_1': {
+				'type': quest['challenge_quest_occurrence_condition_2_1'],
+				'params': [quest['occurrence_condition_param_2_1_1'], quest['occurrence_condition_param_2_1_2']],
+			},
+			'2_2': {
+				'type': quest['challenge_quest_occurrence_condition_2_2'],
+				'params': [quest['occurrence_condition_param_2_2_1'], quest['occurrence_condition_param_2_2_2']],
+			},
+			'2_3': {
+				'type': quest['challenge_quest_occurrence_condition_2_3'],
+				'params': [quest['occurrence_condition_param_2_3_1'], quest['occurrence_condition_param_2_3_2']],
+			},
+		}
+		conds = ['2_1', '2_2', '2_3']
+		for cond in conds:
+			if conditions[cond]['type'] == 1:
+				enemy_id = conditions[cond]['params'][0]
+				conditions[cond]['name'] = get_enemy_name(enemy_id)
+		occurs = {
+			'1': {
+				'type': quest['events_occur_1'],
+				'params': [quest['event_param_1_1'], quest['event_param_1_2']],
+			},
+			'2': {
+				'type': quest['events_occur_2'],
+				'params': [quest['event_param_2_1'], quest['event_param_2_2']],
+			},
+			'3': {
+				'type': quest['events_occur_3'],
+				'params': [quest['event_param_3_1'], quest['event_param_3_2']],
+			}
+		}
+		stored_quest = {
+			'id': _id,
+			'area_radius': quest['area_radius'],
+			'judgment_area_size': quest['judgment_area_size'],
+			'quest_time_limit': quest['quest_time_limit'],
+			'cool_time': quest['cool_time'],
+			'conditions': conditions,
+			'occurs': occurs,
+		}
+		APIEXT_DATA['masterchallengequest'][_id] = stored_quest
+	return APIEXT_DATA['masterchallengequest']
+
+
+def get_boss_data(quest_id):
+	global APIEXT_DATA
+	global PAK_DATA
+	quests = get_apiext_challenge_quests()
+	if quest_id not in quests:
+		print(f"Quest not found: {quest_id}")
+		return [{}, {}]
+	quest = quests[quest_id]
+	if quest['occurs']['1']['type'] != 1:
+		print(f"Quest occur is not ES: {quest_id}")
+		exit(1)
+	es_id = quest['occurs']['1']['params'][0]
+	boss_es = PAK_DATA['EnemySet'][es_id]
+	return [boss_es, quest]
+
+
 def get_positions(category, entry_type, file):
 	with codecs.open(file, 'r', 'utf8') as f:
 		entry_list = json.load(f)
-	prefix = file.split('\\')[-1].split('.')[0]
+	prefix = file.split(os.sep)[-1].split('.')[0]
 	idx_map = {}
 	results = []
 	for (idx, entry) in enumerate(entry_list):
 		idx_map[idx] = entry
+	id_map = {
+		f"{category}Id": lambda x: x[f"{category}Id"],
+		f"{category}IdList": lambda x: x[f"{category}IdList"][0],
+	}
 	for entry in entry_list:
 		if entry["Type"] != entry_type:
 			continue
-		cat_id = entry["Properties"][f"{category}Id"]
-		cat_tag = entry["Properties"].get(f"{category}Tag", entry["Properties"][f"{category}Id"])
-		root_id = entry["Properties"]["RootComponent"]["ObjectPath"].split(".")[-1]
+		properties = entry["Properties"]
+		cat_id = ""
+		for (key, func) in id_map.items():
+			if key in properties:
+				cat_id = func(properties)
+				break
+		if not cat_id:
+			print(f"Cannot get id for: {json.dumps(entry, indent=2)}")
+			exit(1)
+		cat_tag = properties.get(f"{category}Tag", cat_id)
+		root_id = properties["RootComponent"]["ObjectPath"].split(".")[-1]
 		result = {
 			f"{category}Id": cat_id,
 			f"{category}Tag": cat_tag,
@@ -257,9 +399,27 @@ def gen_warp_points(sc_file):
 def gen_nappos(sc_file):
 	results = get_positions("ProfileData", "BP_NpcSpawnPoint_NappoTraverse_C", sc_file)
 	# populate results
-	print(results)
 	return results
 
+def gen_bosses(en_file):
+	results = get_positions("Quest", "BP_InterruptQuestPoint_C", en_file)
+	# populate results
+	for result in results:
+		quest_id = result['QuestId']
+		[data, quest_data] = get_boss_data(quest_id)
+		if data:
+			result['Data'] = data
+		if quest_data:
+			result['QuestData'] = quest_data
+	return results
+
+def gen_habitats(en_file):
+	results = get_positions("Habitat", "SBEnemyHabitat", en_file)
+	# populate results
+	return results
+
+
+# File analyzer
 def analysis_sc_file(zone_id, sc_file):
 	global OUTPUT_DATA
 	gen_sc_elements_func = {
@@ -280,7 +440,13 @@ def analysis_pu_file(zone_id, pu_file):
 		OUTPUT_DATA[zone_id][keyword] += func(pu_file)
 
 def analysis_en_file(zone_id, en_file):
-	pass
+	global OUTPUT_DATA
+	gen_en_elements_func = {
+		'Bosses': gen_bosses,
+		'Habitats': gen_habitats,
+	}
+	for (keyword, func) in gen_en_elements_func.items():
+		OUTPUT_DATA[zone_id][keyword] += func(en_file)
 
 def analysis_sublevel_file(path, file):
 	analytic_function_map = {
@@ -326,6 +492,7 @@ def analysis_bgconfig_file(file):
 if __name__ == '__main__':
 	load_apiext_texts()
 	load_pak_texts()
+	load_pak_datas()
 	for (name, entries) in OUTPUT_TEXT.items():
 		output_path = os.path.join(OUTPUT_PATH, 'text')
 		if not os.path.exists(output_path):

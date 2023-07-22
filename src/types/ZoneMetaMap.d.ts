@@ -4,6 +4,7 @@ import { GatherPoint } from './GatherPoint';
 import { TreasureBox } from './TreasureBox';
 import { FreeBuff } from './FreeBuff';
 import { Nappo } from './Nappo';
+import { Boss } from './Boss';
 
 export type ZoneName = {
     ja_JP: string;
@@ -20,6 +21,7 @@ export type ZoneMetaMap = {
         treasureBoxes?: TreasureBox[];
         freeBuffs?: FreeBuff[];
         nappos?: Nappo[];
+        bosses?: Boss[];
         name?: ZoneName;
     };
 };

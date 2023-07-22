@@ -10,8 +10,10 @@ import TreasureLMIconImg from '../assets/icon/LiquidMemory/UI_LiquidMemoryListLv
 import FreeBuffIconImg from '../assets/icon/Map/UI_Map_95.webp';
 import WarpPointIconImg from '../assets/icon/Map/UI_Map_12.webp';
 import NappoIconImg from '../assets/icon/HappyNappo/UI_HappyNappoIconInteract.webp';
+import BossIconImg from '../assets/icon/Map/UI_Map_04.webp';
 
 const ICON_SIZE = 36;
+const ICON_SIZE_LARGE = 48;
 const ICON_SIZE_SMALL = 24;
 
 export const MineralIcon = L.icon({
@@ -89,6 +91,13 @@ export const TreasureLMIcon = L.icon({
     iconSize: [ICON_SIZE, ICON_SIZE],
     iconAnchor: [ICON_SIZE / 2, ICON_SIZE / 2],
     popupAnchor: [0, - ICON_SIZE / 2],
+});
+
+export const BossIcon = L.icon({
+    iconUrl: BossIconImg,
+    iconSize: [ICON_SIZE_LARGE, ICON_SIZE_LARGE],
+    iconAnchor: [ICON_SIZE_LARGE / 2, ICON_SIZE_LARGE / 2],
+    popupAnchor: [0, - ICON_SIZE_LARGE / 2],
 });
 
 import TreasureABIcon140048000 from '../assets/icon/Adventureboard/UI_Adventureboard_140048000.webp';

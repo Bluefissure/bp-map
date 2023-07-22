@@ -11,7 +11,7 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
-import { MapMarker, MapTreasure, MapContent, MapFreeBuff, MapWarpPoint, MapNappo } from '../types/MapMarker';
+import { MapMarker, MapTreasure, MapFreeBuff, MapWarpPoint, MapNappo, MapBoss } from '../types/MapMarker';
 import { ContentType } from './MapDrawer';
 
 import {
@@ -50,6 +50,7 @@ import {
     FreeBuffIcon,
     WarpPointIcon,
     NappoIcon,
+    BossIcon,
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
 import i18n from '../i18n';
@@ -95,6 +96,7 @@ export const MyMapContainer = () => {
     const freeBuffs = zoneMetaMap[zoneId].freeBuffs ?? [];
     const warpPoints = zoneMetaMap[zoneId].warpPoints ?? [];
     const nappos = zoneMetaMap[zoneId].nappos ?? [];
+    const bosses = zoneMetaMap[zoneId].bosses?.filter((x) => x.Data) ?? [];
     const bgConfig: {
         [key: string]: ZoneConfig
     } = bgConfigJson;
@@ -185,7 +187,6 @@ export const MyMapContainer = () => {
     const fbMarkers = freeBuffs.map((fb) => {
         const position = calcMapPosition(fb.RelativeLocation, zoneConfig, mapSize);
         const gatherType = t('markerType.freeBuff');
-        const icon = FreeBuffIcon;
         const freebuffs = fb.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
             (item, idx) => {
                 return {
@@ -200,7 +201,7 @@ export const MyMapContainer = () => {
             dataType: 'FreeBuff',
             markerType: gatherType,
             position,
-            icon,
+            icon: FreeBuffIcon,
             content: freebuffs,
         } as MapMarker;
     });
@@ -208,14 +209,13 @@ export const MyMapContainer = () => {
     const wpMarkers = warpPoints.map((wp) => {
         const position = calcMapPosition(wp.RelativeLocation, zoneConfig, mapSize);
         const markerType = t('markerType.warpPoint');
-        const icon = WarpPointIcon;
         return {
             key: wp.WarpPointKey,
             dataType: 'WarpPoint',
             zIndex: 10,
             markerType: markerType,
             position,
-            icon,
+            icon: WarpPointIcon,
             content: {
                 type: 'WarpPoint',
                 key: wp.WarpPointKey,
@@ -227,14 +227,13 @@ export const MyMapContainer = () => {
     const npMarkers = nappos.map((np) => {
         const position = calcMapPosition(np.RelativeLocation, zoneConfig, mapSize);
         const markerType = t('markerType.nappo');
-        const icon = NappoIcon;
         return {
             key: np.ProfileDataKey,
             dataType: 'Nappo',
             zIndex: 2,
             markerType: markerType,
             position,
-            icon,
+            icon: NappoIcon,
             content: {
                 type: 'Nappo',
                 key: np.ProfileDataKey,
@@ -243,8 +242,29 @@ export const MyMapContainer = () => {
         } as MapMarker;
     });
 
+    const bossMarkers = bosses.map((boss) => {
+        const position = calcMapPosition(boss.RelativeLocation, zoneConfig, mapSize);
+        const markerType = t('markerType.boss');
+        const name = boss.Data?.members[0].Name.ja_JP;
+        return {
+            key: boss.QuestKey,
+            dataType: 'Boss',
+            zIndex: 3,
+            markerType: markerType,
+            position,
+            icon: BossIcon,
+            content: {
+                type: 'Boss',
+                key: boss.QuestKey,
+                name,
+                data: boss.Data,
+                questData: boss.QuestData,
+            } as MapBoss,
+        } as MapMarker;
+    });
 
-    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers, ...wpMarkers, ...npMarkers] as MapMarker[];
+
+    const markers = [...gpMarkers, ...trMarkers, ...fbMarkers, ...wpMarkers, ...npMarkers, ...bossMarkers] as MapMarker[];
     const markerTypeIconMap = {} as {[key:string]: string};
     markers.forEach((marker) => {
         let iconUrl = marker.icon.options.iconUrl;
@@ -268,6 +288,8 @@ export const MyMapContainer = () => {
                 return [(marker.content as MapWarpPoint).name];
             } else if (marker.dataType === 'Nappo') {
                 return [(marker.content as MapNappo).name];
+            } else if (marker.dataType === 'Boss') {
+                return [(marker.content as MapBoss).name];
             }
         }
         return [];
@@ -288,6 +310,8 @@ export const MyMapContainer = () => {
             } else {
                 if (marker.dataType === 'WarpPoint') {
                     tempDict[(marker.content as MapWarpPoint).name] = [marker.markerType];
+                } else if (marker.dataType === 'Boss') {
+                    tempDict[(marker.content as MapBoss).name] = [marker.markerType];
                 }
             }
         });
@@ -321,30 +345,145 @@ export const MyMapContainer = () => {
         ));
     });
 
-    const markerContentRender = (dataType: string, content: MapContent) => {
+    const markerContentRender = (marker: MapMarker) => {
+        const { dataType, content } = marker;
         if (Array.isArray(content)) {
             if (['GatherPoint', 'TreasureBox', 'FreeBuff'].indexOf(dataType) !== -1) {
-                return content.map((tr)=> (
-                    <div className="flex justify-between items-center" key={tr.key}>
-                        <div>
-                            {tr.name}
-                        </div>
-                        <div className="space-x-4">
-                            <span>{tr.amount}</span>
-                            <span> </span>
-                        </div>
-                        <div >
-                            {tr.rate}
-                        </div>
-                    </div>
-                ));
+                const header = (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
+                return (
+                    <>
+                        {header}
+                        {content.map((tr)=> (
+                            <div className="flex justify-between items-center" key={tr.key}>
+                                <div>
+                                    {tr.name}
+                                </div>
+                                <div className="space-x-4">
+                                    <span>{tr.amount}</span>
+                                    <span> </span>
+                                </div>
+                                <div >
+                                    {tr.rate}
+                                </div>
+                            </div>
+                        ))}
+                    </>
+                );
             }
         } else {
             if (dataType === 'WarpPoint') {
+                const header = (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
                 return (
-                    <div>
+                    <>
+                        {header}
                         {content.name}
+                    </>
+                );
+            } else if (dataType === 'Boss') {
+                const header = (<div className='font-extrabold'>{content.name}</div>);
+                const minLv = (content as MapBoss).data?.members[0].MinLv ?? 0;
+                const maxLv = (content as MapBoss).data?.members[0].MaxLv ?? 0;
+                let lvStr = `Lv.${minLv}`;
+                if (maxLv !== minLv) {
+                    lvStr += `~${maxLv}`;
+                }
+                const cdStr = (content as MapBoss).questData?.cool_time ?? 0;
+                const lvCdDom = (
+                    <div className="flex justify-between items-center mb-1">
+                        <div className='text-xs'>{lvStr}</div>
+                        <div className="space-x-4">
+                            <span> </span>
+                            <span> </span>
+                        </div>
+                        <div className='text-xs'>
+                            <Trans
+                                i18nKey={'bossCondition.cd'}
+                                defaults='CD: {{cd}}m'
+                                values={{cd: cdStr}}
+                            />
+                        </div>
                     </div>
+                );
+                const conditionsDom = [] as JSX.Element[];
+                const conditions = (content as MapBoss).questData?.conditions;
+                if (conditions) {
+                    if(conditions[1].type === 2 || conditions[1].type === 3){
+                        conditionsDom.push((
+                            <li key="cond_1">
+                                <Trans i18nKey={
+                                    conditions[1].type === 3
+                                        ? 'bossCondition.appearsAtNight'
+                                        : 'bossCondition.appearsDuringTheDay'
+                                }>
+                                    Appears {conditions[1].type === 3 ? 'at night' : 'during the day'}
+                                </Trans>
+                            </li>
+                        ))
+                    }
+                    const keyList = ['2_1', '2_2', '2_3'];
+                    keyList.forEach((key) => {
+                        const entry = conditions[key] ?? {};
+                        if (entry.type === 1) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.killEnemies'}
+                                        defaults="Kill {{amount}} {{enemy}}"
+                                        values={{
+                                            amount: entry.params[1],
+                                            enemy: entry.name?.ja_JP,
+                                        }}
+                                    />
+                                </li>
+                            ))
+                        } else if (entry.type === 3 && entry.params[0].indexOf('Gimmick') !== -1) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.openTreasureBox'}
+                                        defaults="Open treasure box"
+                                    />
+                                </li>
+                            ))
+                        } else if (entry.type === 9) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.numberOfPlayers'}
+                                        defaults="{{amount}} players around"
+                                        values={{
+                                            amount: Number.parseInt(entry.params[0]),
+                                        }}
+                                    />
+                                </li>
+                            ))
+                        } else if (entry.type > 0){
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.unknownCondition'}
+                                        defaults="Unknown condition ({{type}})"
+                                        values={{
+                                            type: entry.type,
+                                        }}
+                                    />
+                                </li>
+                            ))
+                        }
+                    })
+                }
+                return (
+                    <>
+                        {header}
+                        {lvCdDom}
+                        <div>
+                            <Trans
+                                i18nKey={'bossCondition.conditions'}
+                                defaults="Conditions:"
+                            />
+                            {conditionsDom}
+                        </div>
+                    </>
                 );
             }
         }
@@ -355,8 +494,7 @@ export const MyMapContainer = () => {
         return (
             <Marker position={marker.position} icon={marker.icon} key={marker.key} zIndexOffset={marker.zIndex * 1000}>
                 <Popup className='w-auto max-w-6xl'>
-                    <div className='font-extrabold mb-2'>{marker.markerType}</div>
-                    {markerContentRender(marker.dataType, marker.content)}
+                    {markerContentRender(marker)}
                 </Popup>
             </Marker>
         );
