@@ -534,13 +534,13 @@ if __name__ == '__main__':
 	load_apiext_texts()
 	load_pak_texts()
 	load_pak_datas()
-	for (name, entries) in OUTPUT_TEXT.items():
-		output_path = os.path.join(OUTPUT_PATH, 'text')
-		if not os.path.exists(output_path):
-			os.makedirs(output_path)
-		output_file = os.path.join(output_path, f'{name}.json')
-		with codecs.open(output_file, 'w', 'utf8') as f:
-			json.dump(entries, f)
+	# for (name, entries) in OUTPUT_TEXT.items():
+	# 	output_path = os.path.join(OUTPUT_PATH, 'text')
+	# 	if not os.path.exists(output_path):
+	# 		os.makedirs(output_path)
+	# 	output_file = os.path.join(output_path, f'{name}.json')
+	# 	with codecs.open(output_file, 'w', 'utf8') as f:
+	# 		json.dump(entries, f)
 
 	for (path, folders, files) in os.walk(os.path.join(PAK_PATH, 'Content', 'Maps')):
 		# print((path, folders, files))
