@@ -17,7 +17,18 @@
             "treasureBoxAB": "Treasure Box - Adventure Board",
             "freeBuff": "Free Buff",
             "warpPoint": "Warp Point",
-            "nappo": "Nappo"
+            "nappo": "Nappo",
+            "boss": "Boss"
+        },
+        "bossCondition": {
+            "cd": "CD: {{cd}}m",
+            "conditions": "Conditions:",
+            "appearsAtNight": "Appears at night",
+            "appearsDuringTheDay": "Appears during the day",
+            "killEnemies": "Kill {{amount}} {{enemy}}",
+            "openTreasureBox": "Open treasure box",
+            "numberOfPlayers": "{{amount}} players around",
+            "unknownCondition": "Unkown condition ({{type}})"
         },
         "drawer": {
             "map": "Map",

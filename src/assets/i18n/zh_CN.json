@@ -17,7 +17,18 @@
             "treasureBoxAB": "宝箱 - 冒险板",
             "freeBuff": "免费增益",
             "warpPoint": "传送点",
-            "nappo": "快乐纳波"
+            "nappo": "快乐纳波",
+            "boss": "首领"
+        },
+        "bossCondition": {
+            "cd": "冷却: {{cd}}m",
+            "conditions": "触发条件：",
+            "appearsAtNight": "在夜晚出现",
+            "appearsDuringTheDay": "在白天出现",
+            "killEnemies": "击杀 {{amount}} 个 {{enemy}}",
+            "openTreasureBox": "打开宝箱",
+            "numberOfPlayers": "周围聚集 {{amount}} 个玩家",
+            "unknownCondition": "未知条件 ({{type}})"
         },
         "drawer": {
             "map": "地图",

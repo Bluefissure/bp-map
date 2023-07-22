@@ -17,7 +17,18 @@
             "treasureBoxAB": "宝箱 - アドベンチャーボード",
             "freeBuff": "放浪の美食屋",
             "warpPoint": "転移ポータル",
-            "nappo": "ハッピーナッポ"
+            "nappo": "ハッピーナッポ",
+            "boss": "ボス"
+        },
+        "bossCondition": {
+            "cd": "CD: {{cd}}m",
+            "conditions": "条件：",
+            "appearsAtNight": "夜に現れる",
+            "appearsDuringTheDay": "昼間に現れる",
+            "killEnemies": "{{amount}} 体の {{enemy}} を倒す",
+            "openTreasureBox": "宝箱を開ける",
+            "numberOfPlayers": "周囲に {{amount}} 人のプレイヤーがいる",
+            "unknownCondition": "不明な条件 ({{type}})"
         },
         "drawer": {
             "map": "マップ",
