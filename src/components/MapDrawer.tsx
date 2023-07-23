@@ -60,6 +60,49 @@ export type ContentType = {
     types: string[],
 };
 
+
+interface AutoCompleteProps {
+    contentTypes: ContentType[],
+    filteredContentTypes: ContentType[],
+    filteredOutTypes: string[],
+    onItemSearchChange: (event: React.SyntheticEvent, value: ContentType[]) => void;
+    
+}
+
+const MyAutoComplete = (props: AutoCompleteProps) => {
+    const { t } = useTranslation();
+    const {
+        contentTypes,
+        filteredContentTypes,
+        filteredOutTypes,
+        onItemSearchChange,
+    } = props;
+    return (
+        <Autocomplete
+            multiple
+            disableCloseOnSelect
+            id="tags-standard"
+            options={contentTypes}
+            getOptionLabel={(option: ContentType) => option.key}
+            onChange={onItemSearchChange}
+            value={filteredContentTypes}
+            groupBy={(option) => (
+                option.types.filter((tp) => (filteredOutTypes.indexOf(tp) === -1))[0]
+            )}
+            isOptionEqualToValue={
+                (option, value) => (option.key === value.key)
+            }
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    label={t('drawer.search')}
+                    placeholder={t('drawer.searchHint')}
+                />
+            )}
+        />
+    )
+}
+
 interface MapDrawerProps {
     drawerOpen: boolean,
     setDrawerOpen?: setBooleanFunc,
@@ -71,6 +114,26 @@ interface MapDrawerProps {
     markerTypeIconMap?: {[key:string]: string},
 }
 
+
+const DrawerHeader = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-start',
+}));
+
+const DrawerFooter = styled('div')(({ theme }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: theme.spacing(0, 1),
+    // necessary for content to be below app bar
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-start',
+    marginTop: `auto`,
+}));
+
 export const MapDrawer = (props: MapDrawerProps) => {
     const { t } = useTranslation();
     const [tabValue, setTabValue] = useState(0);
@@ -81,25 +144,6 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const drawerWidth = '500px';
     const drawerContentWidth = '450px';
     const theme = useTheme();
-
-    const DrawerHeader = styled('div')(({ theme }) => ({
-        display: 'flex',
-        alignItems: 'center',
-        padding: theme.spacing(0, 1),
-        // necessary for content to be below app bar
-        ...theme.mixins.toolbar,
-        justifyContent: 'flex-start',
-    }));
-
-    const DrawerFooter = styled('div')(({ theme }) => ({
-        display: 'flex',
-        alignItems: 'center',
-        padding: theme.spacing(0, 1),
-        // necessary for content to be below app bar
-        ...theme.mixins.toolbar,
-        justifyContent: 'flex-start',
-        marginTop: `auto`,
-    }));
     
 
     const handleDrawerClose = () => {
@@ -148,7 +192,11 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const dungeonZoneIds = ['dng007', 'dng009', 'pat0201', 'pat0801', 'pat0802', 'pat0803'];
     // Generate marker selector
     const markerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
-    const contentTypes = props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? [];
+    const contentTypes = (props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? []).sort((x, y) => {
+        const xType = x.types[0];
+        const yType = y.types[0];
+        return (xType < yType) ? -1 : ((xType > yType) ? 1 : 0)
+    });
     const [filteredOutTypes, setFilteredOutTypes] = useStateWithLS('filteredOutMarkerTypes', [] as string[]);
     const [filteredContentTypes, setFilteredContentTypes] = useState([] as ContentType[]);
 
@@ -292,30 +340,11 @@ export const MapDrawer = (props: MapDrawerProps) => {
                 <List>
                     <ListItem>
                         <Stack spacing={3} sx={{ width: drawerContentWidth }}>
-                            <Autocomplete
-                                multiple
-                                id="tags-standard"
-                                options={contentTypes.sort((x, y) => {
-                                    const xType = x.types[0];
-                                    const yType = y.types[0];
-                                    return (xType < yType) ? -1 : ((xType > yType) ? 1 : 0)
-                                })}
-                                getOptionLabel={(option) => option.key}
-                                onChange={onItemSearchChange}
-                                value={filteredContentTypes}
-                                groupBy={(option) => (
-                                    option.types.filter((tp) => (filteredOutTypes.indexOf(tp) === -1))[0]
-                                )}
-                                isOptionEqualToValue={
-                                    (option, value) => (option.key === value.key)
-                                }
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        label={t('drawer.search')}
-                                        placeholder={t('drawer.searchHint')}
-                                    />
-                                )}
+                            <MyAutoComplete
+                                contentTypes={contentTypes}
+                                filteredContentTypes={filteredContentTypes}
+                                filteredOutTypes={filteredOutTypes}
+                                onItemSearchChange={onItemSearchChange}
                             />
                         </Stack>
                     </ListItem>
