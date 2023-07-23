@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useLoaderData } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import crossfilter from 'crossfilter2';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
@@ -30,12 +30,14 @@ import {
     DialogTitle,
     OutlinedInput,
     Stack,
+    Link,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
+import InfoIcon from '@mui/icons-material/Info';
 
 import {
     MineralIcon,
@@ -57,28 +59,37 @@ import { RelativeLocation } from '../types/GatherPoint';
 import i18n from '../i18n';
 import { useStateWithLS } from '../customHooks/useStateWithLS';
 
+type loaderData = {
+    zoneId?: string;
+}
 
 export const MyMapContainer = () => {
     const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
-    const searchParams = new URLSearchParams(location.search);
-    const zoneIdParam = searchParams.get('zone_id');
-    const [zoneId, setZoneId] = useStateWithLS('zoneId', zoneIdParam ?? 'fld001');
+    const loaderData = useLoaderData() as loaderData;
+    const [zoneId, setZoneId] = useStateWithLS('zoneId', 'fld001');
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [langDialogOpen, setLangDialogOpen] = useState(false);
+    const [aboutDialogOpen, setAboutDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
     const [dataLang, setDataLang] = useState('ja_JP');
 
     useEffect(() => {
-        document.title = 'Blue Protocol Interactive Map';
+        document.title = t('title');
     }, []);
 
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const zoneIdParam = searchParams.get('zone_id');
-        if (zoneIdParam && zoneId != zoneIdParam) {
-            setZoneId(zoneIdParam);
+        let tempZoneId = zoneId;
+        if (loaderData.zoneId) {
+            tempZoneId = loaderData.zoneId;
+        }
+        const validZoneIds = Object.keys(zoneMetaMap);
+        const newZoneId = validZoneIds.indexOf(tempZoneId) === -1
+            ? 'fld001' : tempZoneId;
+        if (newZoneId !== zoneId) {
+            setZoneId(newZoneId);
+            navigate('/');
         }
     }, [location.search]);
 
@@ -662,19 +673,68 @@ export const MyMapContainer = () => {
                     </Box>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => {setLangDialogOpen(false);}}>Cancel</Button>
+                    <Button onClick={() => {setLangDialogOpen(false);}}>
+                        <Trans i18nKey={'settings.language.cancel'} >
+                            Cancel
+                        </Trans>
+                    </Button>
                     <Button onClick={() => {
                         i18n.changeLanguage(uiLang).then(() => {
                             navigate(0);
                         }).catch((e) => {console.error(e);});
-                    }}>Ok</Button>
+                    }}>
+                        <Trans i18nKey={'settings.language.ok'} >
+                            OK
+                        </Trans>
+                    </Button>
+                </DialogActions>
+            </Dialog>
+            
+            <Dialog
+                disableEscapeKeyDown
+                open={aboutDialogOpen}
+                onClose={() => {setAboutDialogOpen(false);}}
+            >
+                <DialogTitle>
+                    <Trans i18nKey={'settings.about.about'}>
+                        About
+                    </Trans>
+                </DialogTitle>
+                <DialogContent
+                    sx={{minWidth: 200}}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                        <Trans i18nKey={'settings.about.contact'} >
+                        Contact:
+                        </Trans>
+                        <Link
+                            href="https://github.com/Bluefissure"
+                            target="_blank"
+                            sx={{ ml: 2 }}
+                        >
+                            Github
+                        </Link>
+                        <Link
+                            href="https://discord.com/users/348375771825569802"
+                            target="_blank"
+                            sx={{ ml: 1 }}
+                        >
+                            Discord
+                        </Link>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {setAboutDialogOpen(false);}}>
+                        <Trans i18nKey={'settings.language.ok'} >
+                            OK
+                        </Trans>
+                    </Button>
                 </DialogActions>
             </Dialog>
             <IconButton
                 color="inherit"
                 aria-label="open drawer"
                 onClick={handleDrawerOpen}
-                sx={{ 
+                sx={{
                     ...(drawerOpen && { display: 'none' }),
                     position: 'absolute',
                     top: '20px',
@@ -705,6 +765,12 @@ export const MyMapContainer = () => {
                 }
             >
                 <SpeedDialAction
+                    key={'about'}
+                    icon={<InfoIcon />}
+                    tooltipTitle={t('settings.about.about')}
+                    onClick={() => {setAboutDialogOpen(!aboutDialogOpen);}}
+                />
+                <SpeedDialAction
                     key={'lang'}
                     icon={<GTranslateIcon />}
                     tooltipTitle={t('settings.language.language')}
@@ -734,7 +800,10 @@ export const MyMapContainer = () => {
                 drawerOpen={drawerOpen}
                 setDrawerOpen={(value: boolean) => {setDrawerOpen(value)}}
                 zoneId={zoneId}
-                setZoneId={(zId: string) => {setZoneId(zId)}}
+                setZoneId={(zId: string) => {
+                    const validZoneIds = Object.keys(zoneMetaMap);
+                    setZoneId(validZoneIds.indexOf(zId) !== -1 ? zId : 'fld001');
+                }}
                 markerTypeDim={markerTypeDim}
                 contentDim={contentDim}
                 contentDimGroupAll={contentDimGroupAll}

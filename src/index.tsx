@@ -12,11 +12,20 @@ import './i18n';
 import './style.css';
 import './index.css';
 
+import ErrorPage from "./routes/error-page";
+
 const router = createBrowserRouter([
     {
-        path: "/",
-        element: <App />,
-    },
+        path: "/:zoneId?",
+        element: (
+            <App />
+        ),
+        errorElement: <ErrorPage />,
+        // eslint-disable-next-line @typescript-eslint/require-await
+        loader: async ({ params }) => {
+            return {...params};
+        },
+    }
 ]);
 
 const root = ReactDOM.createRoot(

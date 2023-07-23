@@ -1,11 +1,18 @@
 {
     "translation": {
         "unknown": "未知",
+        "title": "蓝色协议互动地图",
         "settings": {
             "language": {
                 "language": "语言",
                 "ui": "界面",
-                "data": "数据"
+                "data": "数据",
+                "cancel": "取消",
+                "ok": "确认"
+            },
+            "about": {
+                "about": "关于",
+                "contact": "联系方式:"
             }
         },
         "markerType": {

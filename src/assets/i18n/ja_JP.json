@@ -5,7 +5,13 @@
             "language": {
                 "language": "言語",
                 "ui": "UI",
-                "data": "データ"
+                "data": "データ",
+                "cancel": "キャンセル",
+                "ok": "OK"
+            },
+            "about": {
+                "about": "について",
+                "contact": "お問い合わせ："
             }
         },
         "markerType": {

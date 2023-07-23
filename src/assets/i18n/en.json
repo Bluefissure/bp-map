@@ -1,11 +1,18 @@
 {
     "translation": {
         "unknown": "Unknown",
+        "title": "Blue Protocol Interactive Map",
         "settings": {
             "language": {
                 "language": "Language",
                 "ui": "UI",
-                "data": "Data"
+                "data": "Data",
+                "cancel": "Cancel",
+                "ok": "OK"
+            },
+            "about": {
+                "about": "About",
+                "contact": "Contact:"
             }
         },
         "markerType": {
@@ -17,7 +24,7 @@
             "treasureBoxAB": "Treasure Box - Adventure Board",
             "freeBuff": "Free Buff",
             "warpPoint": "Warp Point",
-            "nappo": "Nappo",
+            "nappo": "Happy Nappo",
             "boss": "Boss",
             "habitat": "Enemy"
         },
