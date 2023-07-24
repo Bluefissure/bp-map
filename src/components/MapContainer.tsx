@@ -79,7 +79,10 @@ export const MyMapContainer = () => {
     const [dataLang, setDataLang] = useState('ja_JP');
 
     useEffect(() => {
-        document.title = t('title');
+        const isModule = !!(document.getElementById('bp-map') as HTMLElement);
+        if (!isModule) {
+            document.title = t('title');
+        }
     }, []);
 
     useEffect(() => {
