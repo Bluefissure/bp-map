@@ -28,9 +28,10 @@ const router = createBrowserRouter([
     }
 ]);
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+const rootElement = document.getElementById('bp-map') as HTMLElement ?? 
+    document.getElementById('root') as HTMLElement;
+
+const root = ReactDOM.createRoot(rootElement);
 
 root.render(
     <React.StrictMode>

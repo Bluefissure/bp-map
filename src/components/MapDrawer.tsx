@@ -228,6 +228,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
                     width: drawerWidth,
+                    position: 'absolute',
                 },
             }}
             variant="persistent"
