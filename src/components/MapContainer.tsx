@@ -145,7 +145,7 @@ export const MyMapContainer = () => {
                     key: `item-treasure-${idx}`,
                     amount: amount,
                     name:  item.text.ja_JP,
-                    rate: `${Math.floor(item.rate / 100)}%`,
+                    rate: `${Math.floor(item.rate) / 100}%`,
                 } as MapTreasure;
             });
         return {
@@ -182,7 +182,7 @@ export const MyMapContainer = () => {
                     key: `item-treasure-${idx}`,
                     amount: amount,
                     name:  item.text.ja_JP,
-                    rate: `${Math.floor(item.rate / 100)}%`,
+                    rate: `${Math.floor(item.rate) / 100}%`,
                 } as MapTreasure;
             });
 
@@ -205,7 +205,7 @@ export const MyMapContainer = () => {
                 return {
                     key: `freebuff-${idx}`,
                     name:  item.text.ja_JP,
-                    rate: `${Math.floor(item.rate / 100)}%`,
+                    rate: `${Math.floor(item.rate) / 100}%`,
                 } as MapFreeBuff;
             });
         return {
@@ -554,7 +554,7 @@ export const MyMapContainer = () => {
                                             <span> </span>
                                         </div>
                                         <div >
-                                            {`${Math.floor(drop.drop_rate / 100)}%`}
+                                            {`${Math.floor(drop.drop_rate) / 100}%`}
                                         </div>
                                     </div>
                                 ))}
@@ -588,7 +588,7 @@ export const MyMapContainer = () => {
                                                         <span> </span>
                                                     </div>
                                                     <div >
-                                                        {`${Math.floor(drop.drop_rate / 100)}%`}
+                                                        {`${Math.floor(drop.drop_rate) / 100}%`}
                                                     </div>
                                                 </div>
                                             ))}
@@ -607,7 +607,7 @@ export const MyMapContainer = () => {
     const renderedMarkers = filteredMarkers.map((marker) => {
         return (
             <Marker position={marker.position} icon={marker.icon} key={marker.key} zIndexOffset={marker.zIndex * 1000}>
-                <Popup className='w-auto max-w-6xl'>
+                <Popup className='w-auto max-w-6xl' maxWidth={500}>
                     {markerContentRender(marker)}
                 </Popup>
             </Marker>

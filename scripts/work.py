@@ -216,13 +216,22 @@ def get_apiext_freebuffs():
 	with codecs.open(freebuffs_file, 'r', 'utf8') as f:
 		freebuffs_list = json.load(f)
 	for freebuff in freebuffs_list:
+		lot_rate = {}
+		for lot in freebuff['lot_rate']:
+			for buff in lot['buffsorting_id']:
+				typ = buff['type']
+				rate = lot['rate'] * buff['buff_rate'] / (100 * 100)
+				if typ not in lot_rate:
+					lot_rate[typ] = {
+						'type': buff['type'],
+						'rate': rate,
+						'text': get_freebuff_text(buff['type'])
+					}
+				else:
+					lot_rate[typ]['rate']  += rate
 		stored_freebuff = {
 			'id': freebuff['id'],
-			'lot_rate': list(map(lambda x: {
-				'type': x['buffsorting_id'][0]['type'],
-				'rate': x['rate'],
-				'text': get_freebuff_text(x['buffsorting_id'][0]['type'])
-			}, freebuff['lot_rate'])),
+			'lot_rate': list(lot_rate.values()),
 		}
 		APIEXT_DATA['freebuff'][freebuff['id']] = stored_freebuff
 	return APIEXT_DATA['freebuff']
