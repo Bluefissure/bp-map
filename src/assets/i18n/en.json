@@ -12,7 +12,15 @@
             },
             "about": {
                 "about": "About",
-                "contact": "Contact:"
+                "author": "2023-2023 @Bluefissure",
+                "disclaimer": "BLUE PROTOCOL is a trademark of BANDAI NAMCO ONLINE INC. & BANDAI NAMCO STUDIOS INC."
+            },
+            "links": {
+                "links": "Useful Tools",
+                "clock": "Calendar (FairyScript)",
+                "adventureBoard": "Adventure Boards (FairyScript)",
+                "incin": "Incin's Map (incineratez)",
+                "bapharia": "Bapharia's Game DB (Zakum)"
             }
         },
         "markerType": {

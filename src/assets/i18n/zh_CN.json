@@ -12,7 +12,15 @@
             },
             "about": {
                 "about": "关于",
-                "contact": "联系方式:"
+                "author": "2023-2023 @Bluefissure",
+                "disclaimer": "BLUE PROTOCOL 是 BANDAI NAMCO ONLINE INC. 和 BANDAI NAMCO STUDIOS INC. 的商标。"
+            },
+            "links": {
+                "links": "实用站点",
+                "clock": "游戏时钟 (FairyScript)",
+                "adventureBoard": "冒险板 (FairyScript)",
+                "incin": "Incin 互动地图 (incineratez)",
+                "bapharia": "Bapharia 游戏数据库 (Zakum)"
             }
         },
         "markerType": {

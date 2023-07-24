@@ -11,7 +11,15 @@
             },
             "about": {
                 "about": "について",
-                "contact": "お問い合わせ："
+                "author": "2023年-2023年 @Bluefissure",
+                "disclaimer": "BLUE PROTOCOLはBANDAI NAMCO ONLINE INC.およびBANDAI NAMCO STUDIOS INC.の商標です。"
+            },
+            "links": {
+                "links": "便利なリンク",
+                "clock": "ゲーム時計 (FairyScript)",
+                "adventureBoard": "冒険ボード (FairyScript)",
+                "incin": "Incinインタラクティブマップ (incineratez)",
+                "bapharia": "Baphariaゲームデータベース (Zakum)"
             }
         },
         "markerType": {

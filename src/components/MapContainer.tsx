@@ -31,6 +31,7 @@ import {
     OutlinedInput,
     Stack,
     Link,
+    Typography,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
@@ -38,6 +39,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import GTranslateIcon from '@mui/icons-material/GTranslate';
 import InfoIcon from '@mui/icons-material/Info';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import {
     MineralIcon,
@@ -72,6 +74,7 @@ export const MyMapContainer = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [langDialogOpen, setLangDialogOpen] = useState(false);
     const [aboutDialogOpen, setAboutDialogOpen] = useState(false);
+    const [linksDialogOpen, setLinksDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
     const [dataLang, setDataLang] = useState('ja_JP');
 
@@ -703,23 +706,31 @@ export const MyMapContainer = () => {
                 <DialogContent
                     sx={{minWidth: 200}}>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                        <Trans i18nKey={'settings.about.contact'} >
-                        Contact:
-                        </Trans>
-                        <Link
-                            href="https://github.com/Bluefissure"
-                            target="_blank"
-                            sx={{ ml: 2 }}
-                        >
-                            Github
-                        </Link>
-                        <Link
-                            href="https://discord.com/users/348375771825569802"
-                            target="_blank"
-                            sx={{ ml: 1 }}
-                        >
-                            Discord
-                        </Link>
+                        <Stack>
+                            <Typography sx={{ mb:2 }}>
+                                <Trans i18nKey={'settings.about.disclaimer'} />
+                            </Typography>
+                            <Box>
+                                <Trans i18nKey={'settings.about.author'} >
+                                    2023-2023 @Bluefissure
+                                </Trans>
+                                <Link
+                                    href="https://github.com/Bluefissure"
+                                    target="_blank"
+                                    sx={{ ml: 2 }}
+                                >
+                                    Github
+                                </Link>
+                                <Link
+                                    href="https://discord.com/users/348375771825569802"
+                                    target="_blank"
+                                    sx={{ ml: 1 }}
+                                >
+                                    Discord
+                                </Link>
+                            </Box>
+                        </Stack>
+                        
                     </Box>
                 </DialogContent>
                 <DialogActions>
@@ -730,6 +741,69 @@ export const MyMapContainer = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Dialog
+                disableEscapeKeyDown
+                open={linksDialogOpen}
+                onClose={() => {setLinksDialogOpen(false);}}
+            >
+                <DialogTitle>
+                    <Trans i18nKey={'settings.links.links'}>
+                        Useful Sites
+                    </Trans>
+                </DialogTitle>
+                <DialogContent
+                    sx={{minWidth: 200}}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                        <Stack>
+                            <Link
+                                href="https://blue.queb.fun/clock/"
+                                target="_blank"
+                                sx={{ mb: 1 }}
+                            >
+                                <Trans i18nKey={'settings.links.clock'} >
+                                    Calendar
+                                </Trans>
+                            </Link>
+                            <Link
+                                href="https://blue.queb.fun/board/"
+                                target="_blank"
+                                sx={{ mb: 1 }}
+                            >
+                                <Trans i18nKey={'settings.links.adventureBoard'} >
+                                    Adventure Boards
+                                </Trans>
+                            </Link>
+                            <Link
+                                href="https://bp.incin.net/map/"
+                                target="_blank"
+                                sx={{ mb: 1 }}
+                            >
+                                <Trans i18nKey={'settings.links.incin'} >
+                                    {"Incin's Map (incineratez)"}
+                                </Trans>
+                            </Link>
+                            <Link
+                                href="https://bapharia.com/db/"
+                                target="_blank"
+                                sx={{ mb: 1 }}
+                            >
+                                <Trans i18nKey={'settings.links.bapharia'} >
+                                    {"Bapharia's Game DB (Zakum)"}
+                                </Trans>
+                            </Link>
+                        </Stack>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {setLinksDialogOpen(false);}}>
+                        <Trans i18nKey={'settings.language.ok'} >
+                            OK
+                        </Trans>
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
             <IconButton
                 color="inherit"
                 aria-label="open drawer"
@@ -764,6 +838,12 @@ export const MyMapContainer = () => {
                     />
                 }
             >
+                <SpeedDialAction
+                    key={'links'}
+                    icon={<FavoriteIcon />}
+                    tooltipTitle={t('settings.links.links')}
+                    onClick={() => {setLinksDialogOpen(!linksDialogOpen);}}
+                />
                 <SpeedDialAction
                     key={'about'}
                     icon={<InfoIcon />}
