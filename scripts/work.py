@@ -2,6 +2,12 @@ import os
 import json
 import codecs
 from collections import defaultdict
+import requests
+from functools import cache
+import urllib.parse
+from dotenv import load_dotenv
+
+load_dotenv()
 
 PAK_PATH = r'D:\FModel\Output\Exports\BLUEPROTOCOL'
 APIEXT_PATH = r'D:\Code\BP\webrequest\logs\output'
@@ -12,6 +18,55 @@ APIEXT_DATA = defaultdict(dict)
 PAK_DATA = defaultdict(dict)
 OUTPUT_TEXT = defaultdict(lambda: defaultdict(dict))
 OUTPUT_DATA = defaultdict(lambda: defaultdict(list))
+
+ZH_CN_CACHE = {}
+ZH_CN_TRANSLATION_API = os.getenv('ZH_CN_TRANSLATION_API')
+# REQ_TIME = 0
+
+@cache
+def translate_zh_CN(ja_JP):
+	global ZH_CN_CACHE#, REQ_TIME
+	# if REQ_TIME > 5:
+	# 	return ''
+	if ja_JP in ZH_CN_CACHE:
+		return ZH_CN_CACHE[ja_JP]
+	if not ZH_CN_TRANSLATION_API:
+		print(f"Missing ZH_CN_TRANSLATION_API in .env")
+		return ''
+	r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP))
+	if r.status_code != 200:
+		print(f"Error status_code: {r.status_code}")
+		ZH_CN_CACHE[ja_JP] = ''
+		return ''
+	r_json = r.json()
+	if 'translate' not in r_json:
+		print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
+		ZH_CN_CACHE[ja_JP] = ''
+		return ''
+	zh_CN = r_json['translate']
+	print(f"{ja_JP} -> {zh_CN}")
+	# REQ_TIME += 1
+	ZH_CN_CACHE[ja_JP] = zh_CN
+	ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
+	with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
+		json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
+	return zh_CN
+
+
+def recursive_translate(value):
+	if isinstance(value, list):
+		for i in range(len(value)):
+			recursive_translate(value[i])
+	elif isinstance(value, dict):
+		if 'ja_JP' in value:
+			value.update({
+				'zh_CN': translate_zh_CN(value['ja_JP'])
+			})
+			return
+		keys = value.keys()
+		for key in keys:
+			recursive_translate(value[key])
+
 
 def load_apiext_texts():
 	global OUTPUT_TEXT
@@ -539,10 +594,16 @@ def analysis_bgconfig_file(file):
 	return configs
 
 
+
 if __name__ == '__main__':
 	load_apiext_texts()
 	load_pak_texts()
 	load_pak_datas()
+
+	ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
+	with codecs.open(ja_JP_zh_CN_path, 'r', 'utf8') as f:
+		ZH_CN_CACHE = json.load(f)
+
 	# for (name, entries) in OUTPUT_TEXT.items():
 	# 	output_path = os.path.join(OUTPUT_PATH, 'text')
 	# 	if not os.path.exists(output_path):
@@ -574,6 +635,12 @@ if __name__ == '__main__':
 			os.makedirs(output_path)
 		for (key, value) in entries.items():
 			output_file = os.path.join(output_path, f'{key}.json')
+			recursive_translate(value)
 			with codecs.open(output_file, 'w', 'utf8') as f:
 				json.dump(value, f)
+
+	print("Missing zh_CN entries:")
+	for (k, v) in ZH_CN_CACHE.items():
+		if not v:
+			print(k)
 

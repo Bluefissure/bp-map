@@ -58,8 +58,25 @@ import {
     HabitatIcon,
 } from './Icons';
 import { RelativeLocation } from '../types/GatherPoint';
+import { TextEntry } from '../types/GatherPoint';
+import { TextStrEntry } from '../types/WarpPoint';
+import { ZoneName } from '../types/ZoneMetaMap';
 import i18n from '../i18n';
 import { useStateWithLS } from '../customHooks/useStateWithLS';
+
+export type langType = 'ja_JP' | 'zh_CN' | 'en_US';
+
+export const getLocalText = (
+    entry: TextEntry | TextStrEntry | ZoneName | undefined,
+    locale: string,
+) => {
+    if (!entry) return '';
+    const localized = entry[locale as langType] ?? entry['ja_JP'];
+    if (!localized) {
+        return entry['ja_JP'];
+    }
+    return localized;
+}
 
 type loaderData = {
     zoneId?: string;
@@ -76,7 +93,12 @@ export const MyMapContainer = () => {
     const [aboutDialogOpen, setAboutDialogOpen] = useState(false);
     const [linksDialogOpen, setLinksDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
-    const [dataLang, setDataLang] = useState('ja_JP');
+    const [dataLang, setDataLang] = useStateWithLS('dataLang', 'ja_JP');
+    const dataLangPatchRedir = {
+        ja_JP: '#',
+        en_US: '#',
+        zh_CN: 'https://blue-protocol.cn/cp/',
+    };
 
     useEffect(() => {
         const isModule = !!(document.getElementById('bp-map') as HTMLElement);
@@ -150,7 +172,7 @@ export const MyMapContainer = () => {
                 return {
                     key: `item-treasure-${idx}`,
                     amount: amount,
-                    name:  item.text.ja_JP,
+                    name:  getLocalText(item.text, dataLang),
                     rate: `${Math.floor(item.rate) / 100}%`,
                 } as MapTreasure;
             });
@@ -187,7 +209,7 @@ export const MyMapContainer = () => {
                 return {
                     key: `item-treasure-${idx}`,
                     amount: amount,
-                    name:  item.text.ja_JP,
+                    name:  getLocalText(item.text, dataLang),
                     rate: `${Math.floor(item.rate) / 100}%`,
                 } as MapTreasure;
             });
@@ -210,7 +232,7 @@ export const MyMapContainer = () => {
             (item, idx) => {
                 return {
                     key: `freebuff-${idx}`,
-                    name:  item.text.ja_JP,
+                    name:  getLocalText(item.text, dataLang),
                     rate: `${Math.floor(item.rate) / 100}%`,
                 } as MapFreeBuff;
             });
@@ -238,7 +260,7 @@ export const MyMapContainer = () => {
             content: {
                 type: 'WarpPoint',
                 key: wp.WarpPointKey,
-                name: wp.Data.ja_JP,
+                name: getLocalText(wp.Data, dataLang),
             } as MapWarpPoint,
         } as MapMarker;
     });
@@ -264,7 +286,7 @@ export const MyMapContainer = () => {
     const bossMarkers = bosses.map((boss) => {
         const position = calcMapPosition(boss.RelativeLocation, zoneConfig, mapSize);
         const markerType = t('markerType.boss');
-        const name = boss.Data?.members[0].Name.ja_JP;
+        const name = getLocalText(boss.Data?.members[0].Name, dataLang);
         return {
             key: boss.QuestKey,
             dataType: 'Boss',
@@ -285,7 +307,6 @@ export const MyMapContainer = () => {
     const habiMarkers = habitats.map((habi) => {
         const position = calcMapPosition(habi.RelativeLocation, zoneConfig, mapSize);
         const markerType = t('markerType.habitat');
-        // const name = habi.Data?.members[0].Name.ja_JP;
         return {
             key: habi.HabitatKey,
             dataType: 'Habitat',
@@ -339,7 +360,7 @@ export const MyMapContainer = () => {
                 return [(marker.content as MapBoss).name];
             } else if (marker.dataType === 'Habitat') {
                 return (marker.content as MapHabitat).data?.members.map(
-                    (member) => (member.Name.ja_JP)
+                    (member) => (getLocalText(member.Name, dataLang))
                 ) ?? [];
             }
         }
@@ -365,7 +386,7 @@ export const MyMapContainer = () => {
                     tempDict[(marker.content as MapBoss).name] = [marker.markerType];
                 } else if (marker.dataType === 'Habitat') {
                     ((marker.content as MapHabitat).data?.members.map(
-                        (member) => (member.Name.ja_JP)
+                        (member) => (getLocalText(member.Name, dataLang))
                     ) ?? []).forEach((v) => {
                         tempDict[v] = [marker.markerType];
                     })
@@ -491,7 +512,7 @@ export const MyMapContainer = () => {
                                         defaults="Kill {{amount}} {{enemy}}"
                                         values={{
                                             amount: entry.params[1],
-                                            enemy: entry.name?.ja_JP,
+                                            enemy: getLocalText(entry.name, dataLang),
                                         }}
                                     />
                                 </li>
@@ -553,7 +574,7 @@ export const MyMapContainer = () => {
                                 (drop, idx) => (
                                     <div className="flex justify-between items-center" key={`habi-drop-${idx}`}>
                                         <div>
-                                            {drop.name?.ja_JP}
+                                            {getLocalText(drop.name, dataLang)}
                                         </div>
                                         <div className="space-x-4">
                                             <span> </span>
@@ -579,7 +600,9 @@ export const MyMapContainer = () => {
                             }
                             return (
                                 <div key={`habi-member-${idx}`}>
-                                    <div className='font-extrabold' key={`${content.key}_${member.EnemyId}`}>{member.Name.ja_JP}</div>
+                                    <div className='font-extrabold' key={`${content.key}_${member.EnemyId}`}>
+                                        {getLocalText(member.Name, dataLang)}
+                                    </div>
                                     <div className='text-xs mb-1'>{lvStr}</div>
                                     <div className='mb-2'>
                                         {member.Drops.filter((drop) => (drop.name)).sort(
@@ -587,7 +610,7 @@ export const MyMapContainer = () => {
                                             (drop, idx) => (
                                                 <div className="flex justify-between items-center" key={`habi-drop-${idx}`}>
                                                     <div>
-                                                        {drop.name?.ja_JP}
+                                                        {getLocalText(drop.name, dataLang)}
                                                     </div>
                                                     <div className="space-x-4">
                                                         <span> </span>
@@ -668,12 +691,28 @@ export const MyMapContainer = () => {
                                     labelId="data-lang-select-label"
                                     id="data-lang-select"
                                     value={dataLang}
-                                    onChange={(e) => {setDataLang(e.target.value);}}
+                                    onChange={(e) => {
+                                        setDataLang(e.target.value);
+                                    }}
                                     input={<OutlinedInput label="Data" />}
                                 >
                                     <MenuItem value={'ja_JP'}>Japanese</MenuItem>
+                                    <MenuItem value={'zh_CN'}>Chinese Simplified</MenuItem>
                                 </Select>
+                                {(['zh_CN', 'en_US'].indexOf(dataLang) !== -1) && (
+                                    <Typography sx={{fontSize: 13}}>
+                                        <Trans
+                                            i18nKey={'settings.language.communityHint'}
+                                            defaults="Data from a <1>community translation</1>."
+                                        >
+                                            Data from a <Link href={
+                                                dataLangPatchRedir[dataLang as langType] ?? '#'
+                                            } target="_blank">community translation</Link>
+                                        </Trans>
+                                    </Typography>
+                                )}
                             </FormControl>
+                            
                         </Stack>
                         
                     </Box>
@@ -881,6 +920,7 @@ export const MyMapContainer = () => {
 
             <MapDrawer
                 drawerOpen={drawerOpen}
+                dataLang={dataLang}
                 setDrawerOpen={(value: boolean) => {setDrawerOpen(value)}}
                 zoneId={zoneId}
                 setZoneId={(zId: string) => {

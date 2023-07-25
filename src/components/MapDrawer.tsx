@@ -45,6 +45,7 @@ import AreaFld02 from '../assets/area/UI_MapArea_Fld02.webp';
 import AreaFld03 from '../assets/area/UI_MapArea_Fld03.webp';
 import AreaFld04 from '../assets/area/UI_MapArea_Fld04.webp';
 import { useStateWithLS } from '../customHooks/useStateWithLS';
+import { getLocalText } from './MapContainer';
 
 interface setBooleanFunc {
     (value: boolean): void;
@@ -105,6 +106,7 @@ const MyAutoComplete = (props: AutoCompleteProps) => {
 
 interface MapDrawerProps {
     drawerOpen: boolean,
+    dataLang: string,
     setDrawerOpen?: setBooleanFunc,
     zoneId?: string,
     setZoneId?: setStringFunc,
@@ -293,7 +295,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                             {dungeonZoneIds.map((zId) => (
                                 <Grid item xs={6} key={`area-pub-${zId}`}>
                                     <ListItemButton onClick={() => {setZoneId?.(zId)}}>
-                                        <ListItemText primary={zoneMetaMap[zId].name?.ja_JP} />
+                                        <ListItemText primary={getLocalText(zoneMetaMap[zId].name, props.dataLang)} />
                                     </ListItemButton>
                                 </Grid>
                             ))}

@@ -148,6 +148,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         habitats: habiDng007,
         name: {
             ja_JP: '枷神の産屋',
+            zh_CN: '枷神巢室',
         }
     },
     dng009: {
@@ -160,6 +161,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         habitats: habiDng009,
         name: {
             ja_JP: '巨竜の爪痕',
+            zh_CN: '巨龙的爪痕',
         }
     },
     pat0201: {
@@ -172,6 +174,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         habitats: habiPat0201,
         name: {
             ja_JP: 'ボルオム遺跡',
+            zh_CN: '柏奥姆遗迹',
         }
     },
     pat0801: {
@@ -184,6 +187,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         habitats: habiPat0801,
         name: {
             ja_JP: '木漏れ日射す林道',
+            zh_CN: '日光斑驳的林间小道',
         }
     },
     pat0802: {
@@ -196,6 +200,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         habitats: habiPat0802,
         name: {
             ja_JP: 'ともし火の森',
+            zh_CN: '灯火之森',
         }
     },
     pat0803: {
@@ -208,6 +213,7 @@ export const zoneMetaMap : ZoneMetaMap = {
         habitats: habiPat0803,
         name: {
             ja_JP: '雨止まぬ森',
+            zh_CN: '雨水森林',
         }
     }
 }

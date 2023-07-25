@@ -7,6 +7,8 @@ export type RelativeLocation = {
 export type TextEntry = {
     id: number;
     ja_JP: string;
+    en_US?: string;
+    zh_CN?: string;
 }
 
 export type Reward = {
