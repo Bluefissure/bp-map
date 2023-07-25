@@ -8,7 +8,8 @@
                 "ui": "界面",
                 "data": "数据",
                 "cancel": "取消",
-                "ok": "确认"
+                "ok": "确认",
+                "communityHint": "数据来源于 <1>社区补丁</1>"
             },
             "about": {
                 "about": "关于",

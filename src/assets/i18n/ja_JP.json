@@ -7,7 +7,8 @@
                 "ui": "UI",
                 "data": "データ",
                 "cancel": "キャンセル",
-                "ok": "OK"
+                "ok": "OK",
+                "communityHint": "<1>コミュニティ翻訳</1>からのデータ。"
             },
             "about": {
                 "about": "について",

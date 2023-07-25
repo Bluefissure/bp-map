@@ -8,7 +8,8 @@
                 "ui": "UI",
                 "data": "Data",
                 "cancel": "Cancel",
-                "ok": "OK"
+                "ok": "OK",
+                "communityHint": "Data from a <1>community translation</1>"
             },
             "about": {
                 "about": "About",
