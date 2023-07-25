@@ -107,6 +107,7 @@ const MyAutoComplete = (props: AutoCompleteProps) => {
 interface MapDrawerProps {
     drawerOpen: boolean,
     dataLang: string,
+    isModule: boolean,
     setDrawerOpen?: setBooleanFunc,
     zoneId?: string,
     setZoneId?: setStringFunc,
@@ -142,6 +143,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const {drawerOpen, setDrawerOpen, setZoneId} = props;
     const [zoneSwitchOpen, setZoneSwitchOpen] = useState(true);
     const [typePanelOpen, setTypePanelOpen] = useState(true);
+    const position = props.isModule ? { position: 'absolute' } : {};
 
     const drawerWidth = '500px';
     const drawerContentWidth = '450px';
@@ -230,7 +232,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                 flexShrink: 0,
                 '& .MuiDrawer-paper': {
                     width: drawerWidth,
-                    position: 'absolute',
+                    ...position
                 },
             }}
             variant="persistent"

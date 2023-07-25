@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useLocation, useNavigate, useLoaderData } from 'react-router-dom';
+import { useLocation, useNavigate, useLoaderData, useSearchParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import crossfilter from 'crossfilter2';
 import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
@@ -94,18 +94,30 @@ export const MyMapContainer = () => {
     const [linksDialogOpen, setLinksDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
     const [dataLang, setDataLang] = useStateWithLS('dataLang', 'ja_JP');
-    const dataLangPatchRedir = {
+    const [searchParams, ] = useSearchParams();
+    const dataLangPatchUrl = {
         ja_JP: '#',
         en_US: '#',
         zh_CN: 'https://blue-protocol.cn/cp/',
     };
+    const isModule = !!(document.getElementById('bp-map') as HTMLElement);
 
     useEffect(() => {
-        const isModule = !!(document.getElementById('bp-map') as HTMLElement);
         if (!isModule) {
             document.title = t('title');
         }
     }, []);
+
+    useEffect(() => {
+        const lng = searchParams.get('lng') as string;
+        if (lng === 'zh_CN') {
+            // setUILang('zh_CN'); // done by LanguageDetector
+            setDataLang('zh_CN');
+            if(dataLang !== lng) {
+                navigate(0);
+            }
+        }
+    }, [location.search]);
 
     useEffect(() => {
         let tempZoneId = zoneId;
@@ -706,7 +718,7 @@ export const MyMapContainer = () => {
                                             defaults="Data from a <1>community translation</1>."
                                         >
                                             Data from a <Link href={
-                                                dataLangPatchRedir[dataLang as langType] ?? '#'
+                                                dataLangPatchUrl[dataLang as langType] ?? '#'
                                             } target="_blank">community translation</Link>
                                         </Trans>
                                     </Typography>
@@ -921,6 +933,7 @@ export const MyMapContainer = () => {
             <MapDrawer
                 drawerOpen={drawerOpen}
                 dataLang={dataLang}
+                isModule={isModule}
                 setDrawerOpen={(value: boolean) => {setDrawerOpen(value)}}
                 zoneId={zoneId}
                 setZoneId={(zId: string) => {
