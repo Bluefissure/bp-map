@@ -94,7 +94,7 @@ export const MyMapContainer = () => {
     const [linksDialogOpen, setLinksDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
     const [dataLang, setDataLang] = useStateWithLS('dataLang', 'ja_JP');
-    const [searchParams, ] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const dataLangPatchUrl = {
         ja_JP: '#',
         en_US: '#',
@@ -113,6 +113,9 @@ export const MyMapContainer = () => {
         if (lng === 'zh_CN') {
             // setUILang('zh_CN'); // done by LanguageDetector
             setDataLang('zh_CN');
+            const updatedSearchParams = new URLSearchParams(searchParams);
+            updatedSearchParams.delete('lng');
+            setSearchParams(updatedSearchParams);
             if(dataLang !== lng) {
                 navigate(0);
             }
