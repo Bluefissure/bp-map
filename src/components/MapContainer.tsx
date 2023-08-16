@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useLoaderData, useSearchParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import crossfilter from 'crossfilter2';
-import { MapContainer, ImageOverlay } from 'react-leaflet';
+import { MapContainer, ImageOverlay, Circle } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
 
@@ -95,6 +95,7 @@ export const MyMapContainer = () => {
     const [linksDialogOpen, setLinksDialogOpen] = useState(false);
     const [uiLang, setUILang] = useState(i18n.language);
     const [dataLang, setDataLang] = useStateWithLS('dataLang', 'ja_JP');
+    const [bossRanges, setBossRanges] = useState([] as JSX.Element[]);
     const [searchParams, setSearchParams] = useSearchParams();
     const dataLangPatchUrl = {
         ja_JP: '#',
@@ -254,6 +255,7 @@ export const MyMapContainer = () => {
         ));
 
     useEffect(() => {
+        setBossRanges([]);
         setFilteredMarkers(cf.allFiltered());
     }, [zoneId]);
 
@@ -269,8 +271,27 @@ export const MyMapContainer = () => {
         ));
     });
 
+    const onMarkerPopupShow = (marker: MapMarker, show: boolean) => {
+        if (marker.dataType === 'Boss') {
+            if (show) {
+                const rawRadius = (marker.content as MapBoss).questData?.area_radius ?? 0;
+                const radius = rawRadius / zoneConfig.CaptureSize.X * mapSize.lng;
+                setBossRanges([
+                    (<Circle
+                        key={`bossrange-${marker.key}`}
+                        center={marker.position}
+                        radius={radius}
+                        pathOptions={{color: 'red'}}
+                    />),
+                ]);
+            } else {
+                setBossRanges([]);
+            }
+        }
+    }
+
     const renderedMarkers = filteredMarkers.map((marker) => {
-        return markerTooltipRender(marker, dataLang);
+        return markerTooltipRender(marker, dataLang, onMarkerPopupShow);
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
@@ -549,6 +570,7 @@ export const MyMapContainer = () => {
                 bounds={bounds}
                 maxBounds={maxBounds}
             >
+                {bossRanges}
                 <ImageOverlay
                     attribution='&copy;BANDAI NAMCO Online Inc. &copy; BANDAI NAMCO Studios Inc.'
                     url={zoneMetaMap[zoneId].bgFile}

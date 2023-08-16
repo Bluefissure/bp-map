@@ -258,9 +258,30 @@ const markerTooltipContentRender = (marker: MapMarker, dataLang: string) => {
     return (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
 };
 
-export const markerTooltipRender = (marker: MapMarker, dataLang: string) => (
-    <Marker position={marker.position} icon={marker.icon} key={marker.key} zIndexOffset={marker.zIndex * 1000}>
-        <Popup className='w-auto max-w-6xl' maxWidth={500}>
+
+export const markerTooltipRender = (
+    marker: MapMarker,
+    dataLang: string,
+    onMarkerPopupShow?: (marker: MapMarker, show: boolean) => void,
+) => (
+    <Marker
+        position={marker.position}
+        icon={marker.icon}
+        key={marker.key}
+        zIndexOffset={marker.zIndex * 1000}
+        eventHandlers={{
+            popupopen: () => {
+                onMarkerPopupShow?.(marker, true);
+            },
+            popupclose: () => {
+                onMarkerPopupShow?.(marker, false);
+            },
+        }}
+    >
+        <Popup
+            className='w-auto max-w-6xl'
+            maxWidth={500}
+        >
             {markerTooltipContentRender(marker, dataLang)}
         </Popup>
     </Marker>
