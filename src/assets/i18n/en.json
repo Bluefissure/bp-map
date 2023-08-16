@@ -21,7 +21,8 @@
                 "clock": "Calendar (FairyScript)",
                 "adventureBoard": "Adventure Boards (FairyScript)",
                 "incin": "Incin's Map (incineratez)",
-                "bapharia": "Bapharia's Game DB (Zakum)"
+                "bapharia": "Bapharia's Game DB (Zakum)",
+                "bp-data": "Blue Protocol Data (mrarm)"
             }
         },
         "markerType": {

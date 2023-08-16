@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate, useLoaderData, useSearchParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import crossfilter from 'crossfilter2';
-import { MapContainer, Marker, Popup, ImageOverlay } from 'react-leaflet';
+import { MapContainer, ImageOverlay } from 'react-leaflet';
 import { LatLng, LatLngBounds} from 'leaflet';
 import * as L from 'leaflet';
 
@@ -11,7 +11,7 @@ import { zoneMetaMap } from './ZoneMetaMap';
 import { MapDrawer } from './MapDrawer';
 
 import { ZoneConfig } from '../types/ZoneConfig';
-import { MapMarker, MapTreasure, MapFreeBuff, MapWarpPoint, MapNappo, MapBoss, MapHabitat } from '../types/MapMarker';
+import { MapMarker, MapWarpPoint, MapNappo, MapBoss, MapHabitat } from '../types/MapMarker';
 import { ContentType } from './MapDrawer';
 
 import {
@@ -48,21 +48,22 @@ import {
     MineralGIcon,
     PlantGIcon,
     AquaticGIcon,
-    TreasureIcon,
-    TreasureLMIcon,
-    TreasureABIcons,
-    FreeBuffIcon,
-    WarpPointIcon,
-    NappoIcon,
-    BossIcon,
-    HabitatIcon,
 } from './Icons';
-import { RelativeLocation } from '../types/GatherPoint';
 import { TextEntry } from '../types/GatherPoint';
 import { TextStrEntry } from '../types/WarpPoint';
 import { ZoneName } from '../types/ZoneMetaMap';
 import i18n from '../i18n';
 import { useStateWithLS } from '../customHooks/useStateWithLS';
+import {
+    genGpMarkers,
+    genTrMarkers,
+    genFbMarkers,
+    genWpMarkers,
+    genNpMarkers,
+    genBossMarkers,
+    genHabiMarkers,
+} from './Markers';
+import { markerTooltipRender } from './MarkerTooltip';
 
 export type langType = 'ja_JP' | 'zh_CN' | 'en_US';
 
@@ -157,187 +158,14 @@ export const MyMapContainer = () => {
         [key: string]: ZoneConfig
     } = bgConfigJson;
     const zoneConfig = bgConfig[zoneTopKey];
-
-    const calcMapPosition = (rel: RelativeLocation, zoneConfig: ZoneConfig, mapSize: LatLng) => {
-        const worldX = rel.X;
-        const worldY = rel.Y;
-        const mapLat = (zoneConfig.CaptureSize.Y - (worldY - zoneConfig.CapturePosition.Y)) / zoneConfig.CaptureSize.Y * mapSize.lat;
-        const mapLng = (worldX - zoneConfig.CapturePosition.X) / zoneConfig.CaptureSize.X * mapSize.lng;
-        return new LatLng(mapLat, mapLng);
-    }
     
-    const gpMarkers = gatherPoints.map((gp) => {
-        const position = calcMapPosition(gp.RelativeLocation, zoneConfig, mapSize);
-        let gatherType = t('markerType.gatheringMineral');
-        const onlyOneTrasure = (gp.Data.lot_rate.length === 1) && (gp.Data.lot_rate[0].rate === 10000);
-        let icon = onlyOneTrasure ? MineralGIcon : MineralIcon;
-        if (gp.GatherPointTag.startsWith('P')) {
-            gatherType = t('markerType.gatheringPlant');
-            icon = onlyOneTrasure ? PlantGIcon : PlantIcon;
-        } else if (gp.GatherPointTag.startsWith('A')) {
-            gatherType = t('markerType.gatheringAquatic');
-            icon = onlyOneTrasure ? AquaticGIcon : AquaticIcon;
-        }
-        const treasures = gp.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
-            (item, idx) => {
-                let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
-                if (item.reward_amount_min === item.reward_amount_max) {
-                    amount = item.reward_amount_min === 1 ? '' : `x${item.reward_amount_min}`;
-                }
-                return {
-                    key: `item-treasure-${idx}`,
-                    amount: amount,
-                    name:  getLocalText(item.text, dataLang),
-                    rate: `${Math.floor(item.rate) / 100}%`,
-                } as MapTreasure;
-            });
-        return {
-            key: gp.GatherPointKey,
-            zIndex: 1,
-            dataType: 'GatherPoint',
-            markerType: gatherType,
-            position,
-            icon,
-            content: treasures,
-        } as MapMarker;
-    });
-
-    const trMarkers = treasureBoxes.map((tr) => {
-        const position = calcMapPosition(tr.RelativeLocation, zoneConfig, mapSize);
-        let markerType = t('markerType.treasureBox');
-        let icon = TreasureIcon;
-        if (tr.Data.lot_rate.length > 0) {
-            if (tr.Data.lot_rate[0].reward_type == 15) {
-                markerType = t('markerType.treasureBoxLM');
-                icon = TreasureLMIcon;
-            } else if (tr.Data.lot_rate[0].reward_type == 28) {
-                markerType = t('markerType.treasureBoxAB');
-                icon = TreasureABIcons[tr.Data.lot_rate[0].reward_master_id] ?? TreasureABIcons['_'];
-            }
-        }
-        const treasures = tr.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
-            (item, idx) => {
-                let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
-                if (item.reward_amount_min === item.reward_amount_max) {
-                    amount = item.reward_amount_min === 1 ? '' : `x${item.reward_amount_min}`;
-                }
-                return {
-                    key: `item-treasure-${idx}`,
-                    amount: amount,
-                    name:  getLocalText(item.text, dataLang),
-                    rate: `${Math.floor(item.rate) / 100}%`,
-                } as MapTreasure;
-            });
-
-        return {
-            key: tr.TreasureBoxKey,
-            zIndex: 2,
-            dataType: 'TreasureBox',
-            markerType: markerType,
-            position,
-            icon,
-            content: treasures,
-        } as MapMarker;
-    });
-
-    const fbMarkers = freeBuffs.map((fb) => {
-        const position = calcMapPosition(fb.RelativeLocation, zoneConfig, mapSize);
-        const gatherType = t('markerType.freeBuff');
-        const freebuffs = fb.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
-            (item, idx) => {
-                return {
-                    key: `freebuff-${idx}`,
-                    name:  getLocalText(item.text, dataLang),
-                    rate: `${Math.floor(item.rate) / 100}%`,
-                } as MapFreeBuff;
-            });
-        return {
-            key: fb.FreeBuffPointKey,
-            zIndex: 1,
-            dataType: 'FreeBuff',
-            markerType: gatherType,
-            position,
-            icon: FreeBuffIcon,
-            content: freebuffs,
-        } as MapMarker;
-    });
-
-    const wpMarkers = warpPoints.map((wp) => {
-        const position = calcMapPosition(wp.RelativeLocation, zoneConfig, mapSize);
-        const markerType = t('markerType.warpPoint');
-        return {
-            key: wp.WarpPointKey,
-            dataType: 'WarpPoint',
-            zIndex: 10,
-            markerType: markerType,
-            position,
-            icon: WarpPointIcon,
-            content: {
-                type: 'WarpPoint',
-                key: wp.WarpPointKey,
-                name: getLocalText(wp.Data, dataLang),
-            } as MapWarpPoint,
-        } as MapMarker;
-    });
-
-    const npMarkers = nappos.map((np) => {
-        const position = calcMapPosition(np.RelativeLocation, zoneConfig, mapSize);
-        const markerType = t('markerType.nappo');
-        return {
-            key: np.ProfileDataKey,
-            dataType: 'Nappo',
-            zIndex: 2,
-            markerType: markerType,
-            position,
-            icon: NappoIcon,
-            content: {
-                type: 'Nappo',
-                key: np.ProfileDataKey,
-                name: '',
-            } as MapNappo,
-        } as MapMarker;
-    });
-
-    const bossMarkers = bosses.map((boss) => {
-        const position = calcMapPosition(boss.RelativeLocation, zoneConfig, mapSize);
-        const markerType = t('markerType.boss');
-        const name = getLocalText(boss.Data?.members[0].Name, dataLang);
-        return {
-            key: boss.QuestKey,
-            dataType: 'Boss',
-            zIndex: 3,
-            markerType: markerType,
-            position,
-            icon: BossIcon,
-            content: {
-                type: 'Boss',
-                key: boss.QuestKey,
-                name,
-                data: boss.Data,
-                questData: boss.QuestData,
-            } as MapBoss,
-        } as MapMarker;
-    });
-
-    const habiMarkers = habitats.map((habi) => {
-        const position = calcMapPosition(habi.RelativeLocation, zoneConfig, mapSize);
-        const markerType = t('markerType.habitat');
-        return {
-            key: habi.HabitatKey,
-            dataType: 'Habitat',
-            zIndex: 1,
-            markerType: markerType,
-            position,
-            icon: HabitatIcon,
-            content: {
-                type: 'Habitat',
-                key: habi.HabitatKey,
-                name: 'Habitat',
-                data: habi.Data,
-            } as MapHabitat,
-        } as MapMarker;
-    });
-
+    const gpMarkers = genGpMarkers(t, gatherPoints, zoneConfig, mapSize, dataLang);
+    const trMarkers = genTrMarkers(t, treasureBoxes, zoneConfig, mapSize, dataLang);
+    const fbMarkers = genFbMarkers(t, freeBuffs, zoneConfig, mapSize, dataLang);
+    const wpMarkers = genWpMarkers(t, warpPoints, zoneConfig, mapSize, dataLang);
+    const npMarkers = genNpMarkers(t, nappos, zoneConfig, mapSize);
+    const bossMarkers = genBossMarkers(t, bosses, zoneConfig, mapSize, dataLang);
+    const habiMarkers = genHabiMarkers(t, habitats, zoneConfig, mapSize);
 
     const markers = [
         ...gpMarkers,
@@ -348,6 +176,7 @@ export const MyMapContainer = () => {
         ...bossMarkers,
         ...habiMarkers,
     ] as MapMarker[];
+
     const markerTypeIconMap = {} as {[key:string]: string};
     markers.forEach((marker) => {
         let iconUrl = marker.icon.options.iconUrl;
@@ -440,267 +269,8 @@ export const MyMapContainer = () => {
         ));
     });
 
-    const markerContentRender = (marker: MapMarker) => {
-        const { dataType, content } = marker;
-        if (Array.isArray(content)) {
-            if (['GatherPoint', 'TreasureBox', 'FreeBuff'].indexOf(dataType) !== -1) {
-                const header = (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
-                return (
-                    <>
-                        {header}
-                        {content.map((tr)=> (
-                            <div className="flex justify-between items-center" key={tr.key}>
-                                <div>
-                                    {tr.name}
-                                </div>
-                                <div className="space-x-4">
-                                    <span>{tr.amount}</span>
-                                    <span> </span>
-                                </div>
-                                <div >
-                                    {tr.rate}
-                                </div>
-                            </div>
-                        ))}
-                    </>
-                );
-            }
-        } else {
-            if (dataType === 'WarpPoint') {
-                const header = (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
-                return (
-                    <>
-                        {header}
-                        {content.name}
-                    </>
-                );
-            } else if (dataType === 'Boss') {
-                const header = (<div className='font-extrabold'>{content.name}</div>);
-                const member = (content as MapBoss).data?.members[0];
-                const minLv = member?.MinLv ?? 0;
-                const maxLv = member?.MaxLv ?? 0;
-                let lvStr = `Lv.${minLv}`;
-                if (maxLv !== minLv) {
-                    lvStr += `~${maxLv}`;
-                }
-                const cdStr = (content as MapBoss).questData?.cool_time ?? 0;
-                const lvCdDom = (
-                    <div className="flex justify-between items-center mb-1">
-                        <div className='text-xs'>{lvStr}</div>
-                        <div className="space-x-4">
-                            <span> </span>
-                            <span> </span>
-                        </div>
-                        <div className='text-xs'>
-                            <Trans
-                                i18nKey={'bossCondition.cd'}
-                                defaults='CD: {{cd}}m'
-                                values={{cd: cdStr}}
-                            />
-                        </div>
-                    </div>
-                );
-                const conditionsDom = [] as JSX.Element[];
-                const conditions = (content as MapBoss).questData?.conditions;
-                if (conditions) {
-                    if(conditions[1].type === 2 || conditions[1].type === 3){
-                        conditionsDom.push((
-                            <li key="cond_1">
-                                <Trans i18nKey={
-                                    conditions[1].type === 3
-                                        ? 'bossCondition.appearsAtNight'
-                                        : 'bossCondition.appearsDuringTheDay'
-                                }>
-                                    Appears {conditions[1].type === 3 ? 'at night' : 'during the day'}
-                                </Trans>
-                            </li>
-                        ))
-                    }
-                    const keyList = ['2_1', '2_2', '2_3'];
-                    keyList.forEach((key) => {
-                        const entry = conditions[key] ?? {};
-                        if (entry.type === 1) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.killEnemies'}
-                                        defaults="Kill {{amount}} {{enemy}}"
-                                        values={{
-                                            amount: entry.params[1],
-                                            enemy: getLocalText(entry.name, dataLang),
-                                        }}
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type === 2) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.playerNearby'}
-                                        defaults="Player nearby for {{amount}} minites"
-                                        values={{
-                                            amount: Number.parseInt(entry.params[0]),
-                                        }}
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type === 3 && entry.params[0].indexOf('Gimmick') !== -1) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.openTreasureBox'}
-                                        defaults="Open treasure box"
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type === 8) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.numberOfPlayersOnMount'}
-                                        defaults="{{amount}} players on mount around"
-                                        values={{
-                                            amount: Number.parseInt(entry.params[0]),
-                                        }}
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type === 9) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.numberOfPlayers'}
-                                        defaults="{{amount}} players around"
-                                        values={{
-                                            amount: Number.parseInt(entry.params[0]),
-                                        }}
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type === 10) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.playerOfLuno'}
-                                        defaults="Player with {{amount}} luno around"
-                                        values={{
-                                            amount: Number.parseInt(entry.params[0]),
-                                        }}
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type === 11) {
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.playerWithDebuff'}
-                                        defaults="Player with debuff around"
-                                    />
-                                </li>
-                            ))
-                        } else if (entry.type > 0){
-                            conditionsDom.push((
-                                <li key={`cond_${key}`}>
-                                    <Trans
-                                        i18nKey={'bossCondition.unknownCondition'}
-                                        defaults="Unknown condition ({{type}})"
-                                        values={{
-                                            type: entry.type,
-                                        }}
-                                    />
-                                </li>
-                            ))
-                        }
-                    })
-                }
-                return (
-                    <>
-                        {header}
-                        {lvCdDom}
-                        <div>
-                            <Trans
-                                i18nKey={'bossCondition.conditions'}
-                                defaults="Conditions:"
-                            />
-                            {conditionsDom}
-                        </div>
-                        <div className='mb-2'>
-                            <Trans
-                                i18nKey={'bossCondition.drops'}
-                                defaults="Drops:"
-                            />
-                            {member?.Drops.filter((drop) => (drop.name)).sort(
-                                (x, y) => (y.drop_rate - x.drop_rate)).map(
-                                (drop, idx) => (
-                                    <div className="flex justify-between items-center" key={`habi-drop-${idx}`}>
-                                        <div>
-                                            {getLocalText(drop.name, dataLang)}
-                                        </div>
-                                        <div className="space-x-4">
-                                            <span> </span>
-                                            <span> </span>
-                                        </div>
-                                        <div >
-                                            {`${Math.floor(drop.drop_rate) / 100}%`}
-                                        </div>
-                                    </div>
-                                ))}
-                        </div>
-                    </>
-                );
-            } else if (dataType === 'Habitat') {
-                return (
-                    <div className="overflow-auto max-h-52">
-                        {(content as MapHabitat).data?.members.map((member, idx) => {
-                            const minLv = member.MinLv ?? 0;
-                            const maxLv = member.MaxLv ?? 0;
-                            let lvStr = `Lv.${minLv}`;
-                            if (maxLv !== minLv) {
-                                lvStr += `~${maxLv}`;
-                            }
-                            return (
-                                <div key={`habi-member-${idx}`}>
-                                    <div className='font-extrabold' key={`${content.key}_${member.EnemyId}`}>
-                                        {getLocalText(member.Name, dataLang)}
-                                    </div>
-                                    <div className='text-xs mb-1'>{lvStr}</div>
-                                    <div className='mb-2'>
-                                        {member.Drops.filter((drop) => (drop.name)).sort(
-                                            (x, y) => (y.drop_rate - x.drop_rate)).map(
-                                            (drop, idx) => (
-                                                <div className="flex justify-between items-center" key={`habi-drop-${idx}`}>
-                                                    <div>
-                                                        {getLocalText(drop.name, dataLang)}
-                                                    </div>
-                                                    <div className="space-x-4">
-                                                        <span> </span>
-                                                        <span> </span>
-                                                    </div>
-                                                    <div >
-                                                        {`${Math.floor(drop.drop_rate) / 100}%`}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                    </div>
-                                </div>
-                            );
-                                
-                        })}
-                    </div>
-                )
-            }
-        }
-        return (<div className='font-extrabold mb-2'>{marker.markerType}</div>);
-    };
-
     const renderedMarkers = filteredMarkers.map((marker) => {
-        return (
-            <Marker position={marker.position} icon={marker.icon} key={marker.key} zIndexOffset={marker.zIndex * 1000}>
-                <Popup className='w-auto max-w-6xl' maxWidth={500}>
-                    {markerContentRender(marker)}
-                </Popup>
-            </Marker>
-        );
+        return markerTooltipRender(marker, dataLang);
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
@@ -892,6 +462,15 @@ export const MyMapContainer = () => {
                             >
                                 <Trans i18nKey={'settings.links.bapharia'} >
                                     {"Bapharia's Game DB (Zakum)"}
+                                </Trans>
+                            </Link>
+                            <Link
+                                href="https://bp-data.net/"
+                                target="_blank"
+                                sx={{ mb: 1 }}
+                            >
+                                <Trans i18nKey={'settings.links.bp-data'} >
+                                    {"Blue Protocol Data (mrarm)"}
                                 </Trans>
                             </Link>
                         </Stack>

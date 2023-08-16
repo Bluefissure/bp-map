@@ -21,7 +21,8 @@
                 "clock": "游戏时钟 (FairyScript)",
                 "adventureBoard": "冒险板 (FairyScript)",
                 "incin": "Incin 互动地图 (incineratez)",
-                "bapharia": "Bapharia 游戏数据库 (Zakum)"
+                "bapharia": "Bapharia 游戏数据库 (Zakum)",
+                "bp-data": "蓝色协议数据站 (mrarm)"
             }
         },
         "markerType": {

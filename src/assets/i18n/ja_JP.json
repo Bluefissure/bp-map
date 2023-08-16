@@ -20,7 +20,8 @@
                 "clock": "ゲーム時計 (FairyScript)",
                 "adventureBoard": "冒険ボード (FairyScript)",
                 "incin": "Incinインタラクティブマップ (incineratez)",
-                "bapharia": "Baphariaゲームデータベース (Zakum)"
+                "bapharia": "Baphariaゲームデータベース (Zakum)",
+                "bp-data": "ブループロトコルデータ (mrarm)"
             }
         },
         "markerType": {
