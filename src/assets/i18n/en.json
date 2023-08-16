@@ -44,8 +44,12 @@
             "appearsAtNight": "Appears at night",
             "appearsDuringTheDay": "Appears during the day",
             "killEnemies": "Kill {{amount}} {{enemy}}",
+            "playerNearby": "Player nearby for {{amount}} minites",
             "openTreasureBox": "Open treasure box",
             "numberOfPlayers": "{{amount}} players around",
+            "numberOfPlayersOnMount": "{{amount}} players on mount around",
+            "playerOfLuno": "Player with {{amount}} luno around",
+            "playerWithDebuff": "Player with debuff around",
             "unknownCondition": "Unkown condition ({{type}})"
         },
         "drawer": {

@@ -43,8 +43,12 @@
             "appearsAtNight": "夜に現れる",
             "appearsDuringTheDay": "昼間に現れる",
             "killEnemies": "{{amount}} 体の {{enemy}} を倒す",
+            "playerNearby": "プレーヤーが {{amount}} 分間近くにいた",
             "openTreasureBox": "宝箱を開ける",
             "numberOfPlayers": "周囲に {{amount}} 人のプレイヤーがいる",
+            "numberOfPlayersOnMount": "マウントを持った {{amount}} 人のプレイヤーが周囲にいます",
+            "playerOfLuno": "周囲に {{amount}} 個のルノがいるプレイヤー",
+            "playerWithDebuff": "周囲にデバフを持つプレイヤー",
             "unknownCondition": "不明な条件 ({{type}})"
         },
         "drawer": {

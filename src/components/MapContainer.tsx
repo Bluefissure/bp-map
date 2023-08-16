@@ -532,12 +532,36 @@ export const MyMapContainer = () => {
                                     />
                                 </li>
                             ))
+                        } else if (entry.type === 2) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.playerNearby'}
+                                        defaults="Player nearby for {{amount}} minites"
+                                        values={{
+                                            amount: Number.parseInt(entry.params[0]),
+                                        }}
+                                    />
+                                </li>
+                            ))
                         } else if (entry.type === 3 && entry.params[0].indexOf('Gimmick') !== -1) {
                             conditionsDom.push((
                                 <li key={`cond_${key}`}>
                                     <Trans
                                         i18nKey={'bossCondition.openTreasureBox'}
                                         defaults="Open treasure box"
+                                    />
+                                </li>
+                            ))
+                        } else if (entry.type === 8) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.numberOfPlayersOnMount'}
+                                        defaults="{{amount}} players on mount around"
+                                        values={{
+                                            amount: Number.parseInt(entry.params[0]),
+                                        }}
                                     />
                                 </li>
                             ))
@@ -550,6 +574,27 @@ export const MyMapContainer = () => {
                                         values={{
                                             amount: Number.parseInt(entry.params[0]),
                                         }}
+                                    />
+                                </li>
+                            ))
+                        } else if (entry.type === 10) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.playerOfLuno'}
+                                        defaults="Player with {{amount}} luno around"
+                                        values={{
+                                            amount: Number.parseInt(entry.params[0]),
+                                        }}
+                                    />
+                                </li>
+                            ))
+                        } else if (entry.type === 11) {
+                            conditionsDom.push((
+                                <li key={`cond_${key}`}>
+                                    <Trans
+                                        i18nKey={'bossCondition.playerWithDebuff'}
+                                        defaults="Player with debuff around"
                                     />
                                 </li>
                             ))

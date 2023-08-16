@@ -44,8 +44,12 @@
             "appearsAtNight": "在夜晚出现",
             "appearsDuringTheDay": "在白天出现",
             "killEnemies": "击杀 {{amount}} 个 {{enemy}}",
+            "playerNearby": "周围持续 {{amount}} 分钟有玩家",
             "openTreasureBox": "打开宝箱",
             "numberOfPlayers": "周围聚集 {{amount}} 个玩家",
+            "numberOfPlayersOnMount": "周围有 {{amount}} 个骑着坐骑的玩家",
+            "playerOfLuno": "周围有玩家携带 {{amount}} 卢诺",
+            "playerWithDebuff": "周围有玩家带有 Debuff",
             "unknownCondition": "未知条件 ({{type}})"
         },
         "drawer": {
