@@ -262,7 +262,7 @@ const markerTooltipContentRender = (marker: MapMarker, dataLang: string) => {
 export const markerTooltipRender = (
     marker: MapMarker,
     dataLang: string,
-    onMarkerPopupShow?: (marker: MapMarker, show: boolean) => void,
+    onMarkerClick?: (marker: MapMarker) => void,
 ) => (
     <Marker
         position={marker.position}
@@ -270,11 +270,8 @@ export const markerTooltipRender = (
         key={marker.key}
         zIndexOffset={marker.zIndex * 1000}
         eventHandlers={{
-            popupopen: () => {
-                onMarkerPopupShow?.(marker, true);
-            },
-            popupclose: () => {
-                onMarkerPopupShow?.(marker, false);
+            click: () => {
+                onMarkerClick?.(marker);
             },
         }}
     >

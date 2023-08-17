@@ -271,27 +271,32 @@ export const MyMapContainer = () => {
         ));
     });
 
-    const onMarkerPopupShow = (marker: MapMarker, show: boolean) => {
+    const onMarkerClick = (marker: MapMarker) => {
         if (marker.dataType === 'Boss') {
-            if (show) {
+            const circleKey = `bossrange-${marker.key}`;
+            const shown = bossRanges.some((ele) => (ele.key === circleKey));
+            if (!shown) {
                 const rawRadius = (marker.content as MapBoss).questData?.area_radius ?? 0;
                 const radius = rawRadius / zoneConfig.CaptureSize.X * mapSize.lng;
                 setBossRanges([
                     (<Circle
-                        key={`bossrange-${marker.key}`}
+                        key={circleKey}
                         center={marker.position}
                         radius={radius}
                         pathOptions={{color: 'red'}}
+                        eventHandlers={{
+                            click: () => {
+                                setBossRanges([]);
+                            },
+                        }}
                     />),
                 ]);
-            } else {
-                setBossRanges([]);
             }
         }
     }
 
     const renderedMarkers = filteredMarkers.map((marker) => {
-        return markerTooltipRender(marker, dataLang, onMarkerPopupShow);
+        return markerTooltipRender(marker, dataLang, onMarkerClick);
     })
 
     const center = new LatLng(mapSize.lat / 2, mapSize.lng / 2);
