@@ -5,5 +5,5 @@ export type TreasureBox = {
     TreasureBoxTag: string;
     TreasureBoxKey: string;
     RelativeLocation: RelativeLocation;
-    Data: GatherPointData;
+    Data?: GatherPointData;
 };

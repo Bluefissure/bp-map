@@ -120,6 +120,10 @@ import TreasureABIcon140043000 from '../assets/icon/Adventureboard/UI_Adventureb
 import TreasureABIcon140045000 from '../assets/icon/Adventureboard/UI_Adventureboard_140045000.webp';
 import TreasureABIcon140047000 from '../assets/icon/Adventureboard/UI_Adventureboard_140047000.webp';
 import TreasureABIcon140052000 from '../assets/icon/Adventureboard/UI_Adventureboard_140052000.webp';
+import TreasureABIcon140054000 from '../assets/icon/Adventureboard/UI_Adventureboard_140054000.webp';
+import TreasureABIcon140056000 from '../assets/icon/Adventureboard/UI_Adventureboard_140056000.webp';
+import TreasureABIcon140058000 from '../assets/icon/Adventureboard/UI_Adventureboard_140058000.webp';
+import TreasureABIcon140059000 from '../assets/icon/Adventureboard/UI_Adventureboard_140059000.webp';
 import TreasureABIconNoData from '../assets/icon/Adventureboard/UI_Adventureboard_NoData.webp';
 
 const ABIcons = {
@@ -135,6 +139,10 @@ const ABIcons = {
     "140045000": TreasureABIcon140045000,
     "140047000": TreasureABIcon140047000,
     "140052000": TreasureABIcon140052000,
+    "140054000": TreasureABIcon140054000,
+    "140056000": TreasureABIcon140056000,
+    "140058000": TreasureABIcon140058000,
+    "140059000": TreasureABIcon140059000,
     "_": TreasureABIconNoData,
 };
 

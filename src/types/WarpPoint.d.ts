@@ -12,6 +12,6 @@ export type WarpPoint = {
     WarpPointTag: string;
     WarpPointKey: string;
     RelativeLocation: RelativeLocation;
-    Data: TextStrEntry;
+    Data?: TextStrEntry;
 }
   

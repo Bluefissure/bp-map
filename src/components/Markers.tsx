@@ -42,7 +42,7 @@ export const genGpMarkers = (t: TFunction, gatherPoints: GatherPoint[], zoneConf
     gatherPoints.map((gp) => {
         const position = calcMapPosition(gp.RelativeLocation, zoneConfig, mapSize);
         let gatherType = t('markerType.gatheringMineral');
-        const onlyOneTrasure = (gp.Data.lot_rate.length === 1) && (gp.Data.lot_rate[0].rate === 10000);
+        const onlyOneTrasure = (gp.Data?.lot_rate.length === 1) && (gp.Data?.lot_rate[0].rate === 10000);
         let icon = onlyOneTrasure ? MineralGIcon : MineralIcon;
         if (gp.GatherPointTag.startsWith('P')) {
             gatherType = t('markerType.gatheringPlant');
@@ -51,7 +51,7 @@ export const genGpMarkers = (t: TFunction, gatherPoints: GatherPoint[], zoneConf
             gatherType = t('markerType.gatheringAquatic');
             icon = onlyOneTrasure ? AquaticGIcon : AquaticIcon;
         }
-        const treasures = gp.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
+        const treasures = gp.Data?.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
             (item, idx) => {
                 let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
                 if (item.reward_amount_min === item.reward_amount_max) {
@@ -80,16 +80,22 @@ export const genTrMarkers = (t: TFunction, treasureBoxes: TreasureBox[], zoneCon
         const position = calcMapPosition(tr.RelativeLocation, zoneConfig, mapSize);
         let markerType = t('markerType.treasureBox');
         let icon = TreasureIcon;
-        if (tr.Data.lot_rate.length > 0) {
-            if (tr.Data.lot_rate[0].reward_type == 15) {
+        if (tr.Data && tr.Data.lot_rate.length > 0) {
+            if (tr.Data?.lot_rate[0].reward_type == 15) {
                 markerType = t('markerType.treasureBoxLM');
                 icon = TreasureLMIcon;
-            } else if (tr.Data.lot_rate[0].reward_type == 28) {
+            } else if (tr.Data?.lot_rate[0].reward_type == 28) {
                 markerType = t('markerType.treasureBoxAB');
-                icon = TreasureABIcons[tr.Data.lot_rate[0].reward_master_id] ?? TreasureABIcons['_'];
+                const abIcon = TreasureABIcons[tr.Data.lot_rate[0].reward_master_id];
+                if (!abIcon) {
+                    console.warn(`Cannot get icon for ${tr.Data.lot_rate[0].reward_master_id}`)
+                    icon = TreasureABIcons['_'];
+                } else {
+                    icon = abIcon
+                }
             }
         }
-        const treasures = tr.Data.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
+        const treasures = tr.Data?.lot_rate.sort((x, y) => (y.rate - x.rate)).map(
             (item, idx) => {
                 let amount = `x${item.reward_amount_min}-${item.reward_amount_max}`;
                 if (item.reward_amount_min === item.reward_amount_max) {

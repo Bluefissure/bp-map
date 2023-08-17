@@ -30,6 +30,6 @@ export type GatherPoint = {
     GatherPointTag: string;
     GatherPointKey: string;
     RelativeLocation: RelativeLocation;
-    Data: GatherPointData;
+    Data?: GatherPointData;
 }
   

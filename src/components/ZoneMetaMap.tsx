@@ -5,34 +5,43 @@ import mapFld001 from '../assets/map/Fld001/UI_MapFld001.webp';
 import mapFld002 from '../assets/map/fld002/UI_MapFld002.webp';
 import mapFld003 from '../assets/map/fld003/UI_Map_Fld003.webp';
 import mapFld004 from '../assets/map/fld004/UI_Map_Fld004.webp';
+import mapDng004 from '../assets/map/dng004/UI_Mapdng004.webp';
 import mapDng007 from '../assets/map/dng007/UI_Mapdng007.webp';
 import mapDng009 from '../assets/map/dng009/UI_Mapdng009.webp';
 import mapPat0201 from '../assets/map/pat0201/UI_Mappat0201.webp';
 import mapPat0801 from '../assets/map/pat0801/UI_Mappat0801.webp';
 import mapPat0802 from '../assets/map/pat0802/UI_Mappat0802.webp';
 import mapPat0803 from '../assets/map/pat0803/UI_Mappat0803.webp';
+import mapPat0804 from '../assets/map/pat0804/UI_Mappat0804.webp';
+import mapPat0901 from '../assets/map/pat0901/UI_Mappat0901.webp';
 
 import gpFld001 from '../assets/data/fld001/GatherPoints.json';
 import gpFld002 from '../assets/data/fld002/GatherPoints.json';
 import gpFld003 from '../assets/data/fld003/GatherPoints.json';
 import gpFld004 from '../assets/data/fld004/GatherPoints.json';
+import gpDng004 from '../assets/data/dng004/GatherPoints.json';
 import gpDng007 from '../assets/data/dng007/GatherPoints.json';
 import gpDng009 from '../assets/data/dng009/GatherPoints.json';
 import gpPat0201 from '../assets/data/pat0201/GatherPoints.json';
 import gpPat0801 from '../assets/data/pat0801/GatherPoints.json';
 import gpPat0802 from '../assets/data/pat0802/GatherPoints.json';
 import gpPat0803 from '../assets/data/pat0803/GatherPoints.json';
+import gpPat0804 from '../assets/data/pat0804/GatherPoints.json';
+import gpPat0901 from '../assets/data/pat0901/GatherPoints.json';
 
 import trFld001 from '../assets/data/fld001/Treasures.json';
 import trFld002 from '../assets/data/fld002/Treasures.json';
 import trFld003 from '../assets/data/fld003/Treasures.json';
 import trFld004 from '../assets/data/fld004/Treasures.json';
+import trDng004 from '../assets/data/dng004/Treasures.json';
 import trDng007 from '../assets/data/dng007/Treasures.json';
 import trDng009 from '../assets/data/dng009/Treasures.json';
 import trPat0201 from '../assets/data/pat0201/Treasures.json';
 import trPat0801 from '../assets/data/pat0801/Treasures.json';
 import trPat0802 from '../assets/data/pat0802/Treasures.json';
 import trPat0803 from '../assets/data/pat0803/Treasures.json';
+import trPat0804 from '../assets/data/pat0804/Treasures.json';
+import trPat0901 from '../assets/data/pat0901/Treasures.json';
 
 import wpCty001 from '../assets/data/cty01/WarpPoints.json';
 import wpCty002 from '../assets/data/cty02/WarpPoints.json';
@@ -40,12 +49,15 @@ import wpFld001 from '../assets/data/fld001/WarpPoints.json';
 import wpFld002 from '../assets/data/fld002/WarpPoints.json';
 import wpFld003 from '../assets/data/fld003/WarpPoints.json';
 import wpFld004 from '../assets/data/fld004/WarpPoints.json';
+import wpDng004 from '../assets/data/dng004/WarpPoints.json';
 import wpDng007 from '../assets/data/dng007/WarpPoints.json';
 import wpDng009 from '../assets/data/dng009/WarpPoints.json';
 import wpPat0201 from '../assets/data/pat0201/WarpPoints.json';
 import wpPat0801 from '../assets/data/pat0801/WarpPoints.json';
 import wpPat0802 from '../assets/data/pat0802/WarpPoints.json';
 import wpPat0803 from '../assets/data/pat0803/WarpPoints.json';
+import wpPat0804 from '../assets/data/pat0804/WarpPoints.json';
+import wpPat0901 from '../assets/data/pat0901/WarpPoints.json';
 
 
 import fbFld001 from '../assets/data/fld001/FreeBuffs.json';
@@ -63,23 +75,29 @@ import bossFld001 from '../assets/data/fld001/Bosses.json';
 import bossFld002 from '../assets/data/fld002/Bosses.json';
 import bossFld003 from '../assets/data/fld003/Bosses.json';
 import bossFld004 from '../assets/data/fld004/Bosses.json';
+import bossDng004 from '../assets/data/dng004/Bosses.json';
 import bossDng007 from '../assets/data/dng007/Bosses.json';
 import bossDng009 from '../assets/data/dng009/Bosses.json';
 import bossPat0201 from '../assets/data/pat0201/Bosses.json';
 import bossPat0801 from '../assets/data/pat0801/Bosses.json';
 import bossPat0802 from '../assets/data/pat0802/Bosses.json';
 import bossPat0803 from '../assets/data/pat0803/Bosses.json';
+import bossPat0804 from '../assets/data/pat0804/Bosses.json';
+import bossPat0901 from '../assets/data/pat0901/Bosses.json';
 
 import habiFld001 from '../assets/data/fld001/Habitats.json';
 import habiFld002 from '../assets/data/fld002/Habitats.json';
 import habiFld003 from '../assets/data/fld003/Habitats.json';
 import habiFld004 from '../assets/data/fld004/Habitats.json';
+import habiDng004 from '../assets/data/dng004/Habitats.json';
 import habiDng007 from '../assets/data/dng007/Habitats.json';
 import habiDng009 from '../assets/data/dng009/Habitats.json';
 import habiPat0201 from '../assets/data/pat0201/Habitats.json';
 import habiPat0801 from '../assets/data/pat0801/Habitats.json';
 import habiPat0802 from '../assets/data/pat0802/Habitats.json';
 import habiPat0803 from '../assets/data/pat0803/Habitats.json';
+import habiPat0804 from '../assets/data/pat0804/Habitats.json';
+import habiPat0901 from '../assets/data/pat0901/Habitats.json';
 
 import { ZoneMetaMap } from '../types/ZoneMetaMap';
 
@@ -137,6 +155,18 @@ export const zoneMetaMap : ZoneMetaMap = {
         nappos: npFld004,
         bosses: bossFld004,
         habitats: habiFld004,
+    },
+    dng004: {
+        bgFile: mapDng004,
+        topFileKey: 'dng004_Top_F1',
+        warpPoints: wpDng004,
+        gatherPoints: gpDng004,
+        treasureBoxes: trDng004,
+        bosses: bossDng004,
+        habitats: habiDng004,
+        name: {
+            ja_JP: '音無き都',
+        }
     },
     dng007: {
         bgFile: mapDng007,
@@ -214,6 +244,30 @@ export const zoneMetaMap : ZoneMetaMap = {
         name: {
             ja_JP: '雨止まぬ森',
             zh_CN: '雨水森林',
+        }
+    },
+    pat0804: {
+        bgFile: mapPat0804,
+        topFileKey: 'pat0804_Top',
+        warpPoints: wpPat0804,
+        gatherPoints: gpPat0804,
+        treasureBoxes: trPat0804,
+        bosses: bossPat0804,
+        habitats: habiPat0804,
+        name: {
+            ja_JP: '緋染めの樹林'
+        }
+    },
+    pat0901: {
+        bgFile: mapPat0901,
+        topFileKey: 'pat0901_Top',
+        warpPoints: wpPat0901,
+        gatherPoints: gpPat0901,
+        treasureBoxes: trPat0901,
+        bosses: bossPat0901,
+        habitats: habiPat0901,
+        name: {
+            ja_JP: '風精の舞台',
         }
     }
 }

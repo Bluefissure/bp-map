@@ -193,7 +193,17 @@ export const MapDrawer = (props: MapDrawerProps) => {
     const fieldAreas = [AreaFld01, AreaFld02, AreaFld03, AreaFld04];
     const cityZoneIds = ['cty001', 'cty002'];
     const fieldZoneIds = ['fld001', 'fld002', 'fld003', 'fld004'];
-    const dungeonZoneIds = ['dng007', 'dng009', 'pat0201', 'pat0801', 'pat0802', 'pat0803'];
+    const dungeonZoneIds = [
+        'dng004',
+        'dng007',
+        'dng009',
+        'pat0201',
+        'pat0801',
+        'pat0802',
+        'pat0803',
+        // 'pat0804',
+        'pat0901',
+    ];
     // Generate marker selector
     const markerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
     const contentTypes = (props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? []).sort((x, y) => {
