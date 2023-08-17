@@ -21,36 +21,41 @@ OUTPUT_DATA = defaultdict(lambda: defaultdict(list))
 
 ZH_CN_CACHE = {}
 ZH_CN_TRANSLATION_API = os.getenv('ZH_CN_TRANSLATION_API')
-# REQ_TIME = 0
+REQ_TIME = 0
 
 @cache
 def translate_zh_CN(ja_JP):
-	global ZH_CN_CACHE#, REQ_TIME
-	# if REQ_TIME > 5:
-	# 	return ''
-	if ja_JP in ZH_CN_CACHE:
+	global ZH_CN_CACHE, REQ_TIME
+	if ja_JP in ZH_CN_CACHE and ZH_CN_CACHE[ja_JP]:
 		return ZH_CN_CACHE[ja_JP]
 	if not ZH_CN_TRANSLATION_API:
 		print(f"Missing ZH_CN_TRANSLATION_API in .env")
 		return ''
-	r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP))
-	if r.status_code != 200:
-		print(f"Error status_code: {r.status_code}")
+	if REQ_TIME > 1:
 		ZH_CN_CACHE[ja_JP] = ''
 		return ''
-	r_json = r.json()
-	if 'translate' not in r_json:
-		print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
-		ZH_CN_CACHE[ja_JP] = ''
-		return ''
-	zh_CN = r_json['translate']
-	print(f"{ja_JP} -> {zh_CN}")
-	# REQ_TIME += 1
-	ZH_CN_CACHE[ja_JP] = zh_CN
-	ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
-	with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
-		json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
-	return zh_CN
+	try:
+		r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP), timeout=3)
+		if r.status_code != 200:
+			print(f"Error status_code: {r.status_code}")
+			ZH_CN_CACHE[ja_JP] = ''
+			return ''
+		r_json = r.json()
+		if 'translate' not in r_json:
+			print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
+			ZH_CN_CACHE[ja_JP] = ''
+			return ''
+		zh_CN = r_json['translate']
+		print(f"{ja_JP} -> {zh_CN}")
+		ZH_CN_CACHE[ja_JP] = zh_CN
+		ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
+		with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
+			json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
+		return zh_CN
+	except:
+		print("API failed")
+		REQ_TIME += 1
+	return ''
 
 
 def recursive_translate(value):
@@ -459,7 +464,10 @@ def gen_gather_points(pu_file):
 	treasures = get_apiext_treasures()
 	for result in results:
 		gp_id = result['GatherPointId']
-		result['Data'] = treasures[gp_id]
+		if gp_id in treasures:
+			result['Data'] = treasures[gp_id]
+		else:
+			print(f"Cannot get treasure of {gp_id}")
 	return results
 
 def gen_free_buffs(pu_file):
@@ -477,7 +485,10 @@ def gen_treasures(pu_file):
 	treasures = get_apiext_treasures()
 	for result in results:
 		gp_id = result['TreasureBoxId']
-		result['Data'] = treasures[gp_id]
+		if gp_id in treasures:
+			result['Data'] = treasures[gp_id]
+		else:
+			print(f"Cannot get treasure of {gp_id}")
 	return results
 
 def gen_warp_points(sc_file):
@@ -486,7 +497,9 @@ def gen_warp_points(sc_file):
 	# populate results
 	for result in results:
 		wp_id = result['WarpPointId']
-		result['Data'] = get_warppoint_text(wp_id)
+		wp_data = get_warppoint_text(wp_id)
+		if wp_data:
+			result['Data'] = wp_data
 	return results
 
 def gen_nappos(sc_file):
@@ -495,7 +508,8 @@ def gen_nappos(sc_file):
 	return results
 
 def gen_bosses(en_file):
-	results = get_positions("Quest", "BP_InterruptQuestPoint_C", en_file)
+	results = get_positions("Quest", "BP_InterruptQuestPoint_C", en_file) + \
+		get_positions("Quest", "SBInterruptQuestPoint", en_file)
 	# populate results
 	for result in results:
 		quest_id = result['QuestId']
@@ -558,7 +572,6 @@ def analysis_sublevel_file(path, file):
 		'_SC.json': analysis_sc_file,
 		'_SCBase.json': analysis_sc_file,
 		'_Nappo.json': analysis_sc_file,
-		'_SCBase.json': analysis_sc_file,
 		'_PU.json': analysis_pu_file,
 		'_EN.json': analysis_en_file,
 	}
