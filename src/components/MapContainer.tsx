@@ -134,6 +134,8 @@ export const MyMapContainer = () => {
             ? 'fld001' : tempZoneId;
         if (newZoneId !== zoneId) {
             setZoneId(newZoneId);
+        }
+        if (loaderData.zoneId) {
             navigate('/');
         }
     }, [location.search]);
@@ -592,7 +594,8 @@ export const MyMapContainer = () => {
                 zoneId={zoneId}
                 setZoneId={(zId: string) => {
                     const validZoneIds = Object.keys(zoneMetaMap);
-                    setZoneId(validZoneIds.indexOf(zId) !== -1 ? zId : 'fld001');
+                    const newZoneId = validZoneIds.indexOf(zId) !== -1 ? zId : 'fld001';
+                    setZoneId(newZoneId);
                 }}
                 markerTypeDim={markerTypeDim}
                 contentDim={contentDim}
