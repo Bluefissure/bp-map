@@ -115,6 +115,8 @@ interface MapDrawerProps {
     contentDim?: crossfilter.Dimension<MapMarker, string>,
     contentDimGroupAll?: ContentType[],
     markerTypeIconMap?: {[key:string]: string},
+    initMarkers?: string[],
+    initSearches?: string[],
 }
 
 
@@ -211,28 +213,45 @@ export const MapDrawer = (props: MapDrawerProps) => {
         const yType = y.types[0];
         return (xType < yType) ? -1 : ((xType > yType) ? 1 : 0)
     });
-    const [filteredOutTypes, setFilteredOutTypes] = useStateWithLS('filteredOutMarkerTypes', [] as string[]);
-    const [filteredContentTypes, setFilteredContentTypes] = useState([] as ContentType[]);
+    const [filteredOutMarkerTypes, setFilteredOutMarkerTypes] = useStateWithLS('filteredOutMarkerTypes', [] as string[]);
+    const [filteredContentNames, setFilteredContentNames] = useState([] as ContentType[]);
 
     useEffect(() => {
-        props.markerTypeDim?.filterFunction((d: string) => (filteredOutTypes.indexOf(d) === -1));
+        props.markerTypeDim?.filterFunction((d: string) => (filteredOutMarkerTypes.indexOf(d) === -1));
         props.contentDim?.filterFunction((d: string) => (
-            filteredContentTypes.length === 0 || filteredContentTypes.map(x => x.key).indexOf(d) !== -1));
-    }, [filteredOutTypes, filteredContentTypes, props.zoneId]);
+            filteredContentNames.length === 0 || filteredContentNames.map(x => x.key).indexOf(d) !== -1));
+    }, [filteredOutMarkerTypes, filteredContentNames, props.zoneId]);
 
+    useEffect(() => {
+        const allMarkerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
+        if(props.initMarkers && props.initMarkers.length > 0) {
+            const filteredOutTypes = allMarkerTypes.filter((x) => (props.initMarkers?.indexOf(x) === -1));
+            setFilteredOutMarkerTypes(filteredOutTypes);
+        }
+    }, [props.initMarkers])
+
+    useEffect(() => {
+        const allFilteredContentNames = (props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? []);
+        if(props.initSearches && props.initSearches.length > 0) {
+            const filteredContentNames = allFilteredContentNames.filter((x) => (props.initSearches?.some(
+                (y) => (x.key.indexOf(y) !== -1)
+            )));
+            setFilteredContentNames(filteredContentNames);
+        }
+    }, [props.initSearches])
 
     const onClickMarkerType = (type: string) => {
-        const existingFilteredOutTypes = new Set([...filteredOutTypes]);
+        const existingFilteredOutTypes = new Set([...filteredOutMarkerTypes]);
         if (existingFilteredOutTypes.has(type)) {
             existingFilteredOutTypes.delete(type);
         } else {
             existingFilteredOutTypes.add(type);
         }
-        setFilteredOutTypes([...existingFilteredOutTypes]);
+        setFilteredOutMarkerTypes([...existingFilteredOutTypes]);
     }
 
     const onItemSearchChange = (event: React.SyntheticEvent, value: ContentType[]) => {
-        setFilteredContentTypes(value);
+        setFilteredContentNames(value);
     }
 
     return (
@@ -339,7 +358,7 @@ export const MapDrawer = (props: MapDrawerProps) => {
                                         label={text}
                                         avatar={avatar}
                                         onClick={() => {onClickMarkerType(text)}}
-                                        {...(filteredOutTypes.indexOf(text) !== -1
+                                        {...(filteredOutMarkerTypes.indexOf(text) !== -1
                                             ? {}
                                             : {variant: 'outlined'})}
                                     />
@@ -357,8 +376,8 @@ export const MapDrawer = (props: MapDrawerProps) => {
                         <Stack spacing={3} sx={{ width: drawerContentWidth }}>
                             <MyAutoComplete
                                 contentTypes={contentTypes}
-                                filteredContentTypes={filteredContentTypes}
-                                filteredOutTypes={filteredOutTypes}
+                                filteredContentTypes={filteredContentNames}
+                                filteredOutTypes={filteredOutMarkerTypes}
                                 onItemSearchChange={onItemSearchChange}
                             />
                         </Stack>

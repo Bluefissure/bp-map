@@ -97,6 +97,8 @@ export const MyMapContainer = () => {
     const [dataLang, setDataLang] = useStateWithLS('dataLang', 'ja_JP');
     const [bossRanges, setBossRanges] = useState([] as JSX.Element[]);
     const [searchParams, setSearchParams] = useSearchParams();
+    const [initMarkers, setInitMarkers] = useState([] as string[]);
+    const [initSearches, setInitSearches] = useState([] as string[]);
     const dataLangPatchUrl = {
         ja_JP: '#',
         en_US: '#',
@@ -112,15 +114,31 @@ export const MyMapContainer = () => {
 
     useEffect(() => {
         const lng = searchParams.get('lng') as string;
+        const updatedSearchParams = new URLSearchParams(searchParams);
+        let needRefresh = false;
         if (lng === 'zh_CN') {
             // setUILang('zh_CN'); // done by LanguageDetector
             setDataLang('zh_CN');
-            const updatedSearchParams = new URLSearchParams(searchParams);
             updatedSearchParams.delete('lng');
             setSearchParams(updatedSearchParams);
             if(dataLang !== lng) {
-                navigate(0);
+                needRefresh = true;
             }
+        }
+        const urlMarker = searchParams.get('marker') as string;
+        if (urlMarker) {
+            setInitMarkers(urlMarker.split(','));
+            updatedSearchParams.delete('marker');
+            setSearchParams(updatedSearchParams);
+        }
+        const urlSearch = searchParams.get('search') as string;
+        if (urlSearch) {
+            setInitSearches(urlSearch.split(','));
+            updatedSearchParams.delete('search');
+            setSearchParams(updatedSearchParams);
+        }
+        if (needRefresh) {
+            navigate(0);
         }
     }, [location.search]);
 
@@ -601,6 +619,8 @@ export const MyMapContainer = () => {
                 contentDim={contentDim}
                 contentDimGroupAll={contentDimGroupAll}
                 markerTypeIconMap={markerTypeIconMap}
+                initMarkers={initMarkers}
+                initSearches={initSearches}
             />
             
         </Box>
