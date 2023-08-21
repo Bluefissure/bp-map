@@ -113,15 +113,34 @@ export const MyMapContainer = () => {
     }, []);
 
     useEffect(() => {
-        const lng = searchParams.get('lng') as string;
         const updatedSearchParams = new URLSearchParams(searchParams);
         let needRefresh = false;
+        const validLng = ['en_US', 'zh_CN', 'ja_JP'];
+        const lng = searchParams.get('lng') as string;
         if (lng === 'zh_CN') {
             // setUILang('zh_CN'); // done by LanguageDetector
             setDataLang('zh_CN');
             updatedSearchParams.delete('lng');
             setSearchParams(updatedSearchParams);
             if(dataLang !== lng) {
+                needRefresh = true;
+            }
+        }
+        const uilng = searchParams.get('uilng') as string;
+        if (uilng && uilng.length > 0 && validLng.indexOf(uilng) !== -1) {
+            setUILang(uilng);
+            updatedSearchParams.delete('uilng');
+            setSearchParams(updatedSearchParams);
+            if(uiLang !== uilng) {
+                needRefresh = true;
+            }
+        }
+        const datalng = searchParams.get('datalng') as string;
+        if (datalng && datalng.length > 0 && validLng.indexOf(datalng) !== -1) {
+            setDataLang(datalng);
+            updatedSearchParams.delete('datalng');
+            setSearchParams(updatedSearchParams);
+            if(dataLang !== datalng) {
                 needRefresh = true;
             }
         }

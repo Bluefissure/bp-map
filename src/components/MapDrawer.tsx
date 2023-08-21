@@ -224,21 +224,22 @@ export const MapDrawer = (props: MapDrawerProps) => {
 
     useEffect(() => {
         const allMarkerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
+        const allFilteredContentNames = props.contentDimGroupAll ?? [];
         if(props.initMarkers && props.initMarkers.length > 0) {
             const filteredOutTypes = allMarkerTypes.filter((x) => (props.initMarkers?.indexOf(x) === -1));
             setFilteredOutMarkerTypes(filteredOutTypes);
+        } else if (props.initSearches && props.initSearches.length > 0) {
+            // if search is set, then we should not filter out anything
+            setFilteredOutMarkerTypes([]);
         }
-    }, [props.initMarkers])
-
-    useEffect(() => {
-        const allFilteredContentNames = (props.contentDimGroupAll?.filter((kv) => (kv.value !== 0)) ?? []);
-        if(props.initSearches && props.initSearches.length > 0) {
+        if(props.initSearches && props.initSearches.length > 0) { 
             const filteredContentNames = allFilteredContentNames.filter((x) => (props.initSearches?.some(
                 (y) => (x.key.indexOf(y) !== -1)
             )));
             setFilteredContentNames(filteredContentNames);
         }
-    }, [props.initSearches])
+    }, [props.initMarkers, props.initSearches])
+
 
     const onClickMarkerType = (type: string) => {
         const existingFilteredOutTypes = new Set([...filteredOutMarkerTypes]);
