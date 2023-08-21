@@ -117,9 +117,9 @@ export const MyMapContainer = () => {
         let needRefresh = false;
         const validLng = ['en_US', 'zh_CN', 'ja_JP'];
         const lng = searchParams.get('lng') as string;
-        if (lng === 'zh_CN') {
+        if (lng && lng.length > 0 && validLng.indexOf(lng) !== -1) {
             // setUILang('zh_CN'); // done by LanguageDetector
-            setDataLang('zh_CN');
+            setDataLang(lng);
             updatedSearchParams.delete('lng');
             setSearchParams(updatedSearchParams);
             if(dataLang !== lng) {
