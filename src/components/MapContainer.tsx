@@ -115,7 +115,7 @@ export const MyMapContainer = () => {
     useEffect(() => {
         const updatedSearchParams = new URLSearchParams(searchParams);
         let needRefresh = false;
-        const validLng = ['en_US', 'zh_CN', 'ja_JP'];
+        const validLng = ['en', 'zh_CN', 'ja_JP'];
         const lng = searchParams.get('lng') as string;
         if (lng && lng.length > 0 && validLng.indexOf(lng) !== -1) {
             // setUILang('zh_CN'); // done by LanguageDetector
