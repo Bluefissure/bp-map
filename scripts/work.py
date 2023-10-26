@@ -25,53 +25,55 @@ ZH_CN_TRANSLATION_API = os.getenv('ZH_CN_TRANSLATION_API')
 REQ_TIME = 0
 
 @cache
-def translate_zh_CN(ja_JP):
+def translate_zh_CN(ja_JP, skip_api=False):
 	global ZH_CN_CACHE, REQ_TIME
 	if ja_JP in ZH_CN_CACHE and ZH_CN_CACHE[ja_JP]:
 		return ZH_CN_CACHE[ja_JP]
 	if not ZH_CN_TRANSLATION_API:
 		print(f"Missing ZH_CN_TRANSLATION_API in .env")
 		return ''
-	# if REQ_TIME > 1:
-	# 	ZH_CN_CACHE[ja_JP] = ''
-	# 	return ''
-	# try:
-	# 	r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP), timeout=3)
-	# 	if r.status_code != 200:
-	# 		print(f"Error status_code: {r.status_code}")
-	# 		ZH_CN_CACHE[ja_JP] = ''
-	# 		return ''
-	# 	r_json = r.json()
-	# 	if 'zh_CN' not in r_json:
-	# 		print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
-	# 		ZH_CN_CACHE[ja_JP] = ''
-	# 		return ''
-	# 	zh_CN = r_json['zh_CN']
-	# 	print(f"{ja_JP} -> {zh_CN}")
-	# 	ZH_CN_CACHE[ja_JP] = zh_CN
-	# 	ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
-	# 	with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
-	# 		json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
-	# 	return zh_CN
-	# except:
-	# 	print("API failed")
-	# 	REQ_TIME += 1
+	if skip_api:
+		return ''
+	if REQ_TIME > 1:
+		ZH_CN_CACHE[ja_JP] = ''
+		return ''
+	try:
+		r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP), timeout=3)
+		if r.status_code != 200:
+			print(f"Error status_code: {r.status_code}")
+			ZH_CN_CACHE[ja_JP] = ''
+			return ''
+		r_json = r.json()
+		if 'zh_CN' not in r_json:
+			print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
+			ZH_CN_CACHE[ja_JP] = ''
+			return ''
+		zh_CN = r_json['zh_CN']
+		print(f"{ja_JP} -> {zh_CN}")
+		ZH_CN_CACHE[ja_JP] = zh_CN
+		ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
+		with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
+			json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
+		return zh_CN
+	except:
+		print("API failed")
+		REQ_TIME += 1
 	return ''
 
 
-def recursive_translate(value):
+def recursive_translate(value, skip_api=False):
 	if isinstance(value, list):
 		for i in range(len(value)):
-			recursive_translate(value[i])
+			recursive_translate(value[i], skip_api)
 	elif isinstance(value, dict):
 		if 'ja_JP' in value:
 			value.update({
-				'zh_CN': translate_zh_CN(value['ja_JP'])
+				'zh_CN': translate_zh_CN(value['ja_JP'], skip_api)
 			})
 			return
 		keys = value.keys()
 		for key in keys:
-			recursive_translate(value[key])
+			recursive_translate(value[key], skip_api)
 
 
 def load_apiext_texts():
@@ -630,7 +632,7 @@ def analysis_bgconfig_file(file):
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--skip-trans', type=str, help='Skip Translation')
+	parser.add_argument('--skip-api', help='Skip Translation API', action='store_true')
 	args = parser.parse_args()
 
 	load_apiext_texts()
@@ -672,7 +674,7 @@ if __name__ == '__main__':
 			os.makedirs(output_path)
 		for (key, value) in entries.items():
 			output_file = os.path.join(output_path, f'{key}.json')
-			recursive_translate(value)
+			recursive_translate(value, skip_api=args.skip_api)
 			with codecs.open(output_file, 'w', 'utf8') as f:
 				json.dump(value, f)
 
