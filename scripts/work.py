@@ -1,6 +1,7 @@
 import os
 import json
 import codecs
+import argparse
 from collections import defaultdict
 import requests
 from functools import cache
@@ -10,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 PAK_PATH = r'D:\FModel\Output\Exports\BLUEPROTOCOL'
-APIEXT_PATH = r'D:\Code\BP\webrequest\logs\output'
+APIEXT_PATH = r'D:\Code\BP\webrequest\output'
 
 OUTPUT_PATH = r'..\src\assets'
 
@@ -31,30 +32,30 @@ def translate_zh_CN(ja_JP):
 	if not ZH_CN_TRANSLATION_API:
 		print(f"Missing ZH_CN_TRANSLATION_API in .env")
 		return ''
-	if REQ_TIME > 1:
-		ZH_CN_CACHE[ja_JP] = ''
-		return ''
-	try:
-		r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP), timeout=3)
-		if r.status_code != 200:
-			print(f"Error status_code: {r.status_code}")
-			ZH_CN_CACHE[ja_JP] = ''
-			return ''
-		r_json = r.json()
-		if 'translate' not in r_json:
-			print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
-			ZH_CN_CACHE[ja_JP] = ''
-			return ''
-		zh_CN = r_json['translate']
-		print(f"{ja_JP} -> {zh_CN}")
-		ZH_CN_CACHE[ja_JP] = zh_CN
-		ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
-		with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
-			json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
-		return zh_CN
-	except:
-		print("API failed")
-		REQ_TIME += 1
+	# if REQ_TIME > 1:
+	# 	ZH_CN_CACHE[ja_JP] = ''
+	# 	return ''
+	# try:
+	# 	r = requests.get(ZH_CN_TRANSLATION_API + urllib.parse.quote(ja_JP), timeout=3)
+	# 	if r.status_code != 200:
+	# 		print(f"Error status_code: {r.status_code}")
+	# 		ZH_CN_CACHE[ja_JP] = ''
+	# 		return ''
+	# 	r_json = r.json()
+	# 	if 'zh_CN' not in r_json:
+	# 		print(f"Wrong API status: {r_json['status']} for \"{ja_JP}\"")
+	# 		ZH_CN_CACHE[ja_JP] = ''
+	# 		return ''
+	# 	zh_CN = r_json['zh_CN']
+	# 	print(f"{ja_JP} -> {zh_CN}")
+	# 	ZH_CN_CACHE[ja_JP] = zh_CN
+	# 	ja_JP_zh_CN_path = os.path.join(OUTPUT_PATH, 'temp', 'ja_JP_zh_CN.json')
+	# 	with codecs.open(ja_JP_zh_CN_path, 'w', 'utf8') as f:
+	# 		json.dump(ZH_CN_CACHE, f, indent=2, ensure_ascii=False)
+	# 	return zh_CN
+	# except:
+	# 	print("API failed")
+	# 	REQ_TIME += 1
 	return ''
 
 
@@ -403,7 +404,7 @@ def get_boss_data(quest_id):
 	quest = quests[quest_id]
 	if quest['occurs']['1']['type'] != 1:
 		print(f"Quest occur is not ES: {quest_id}")
-		exit(1)
+		return [{}, {}]
 	es_id = quest['occurs']['1']['params'][0]
 	boss_es = PAK_DATA['EnemySet'][es_id]
 	return [boss_es, quest]
@@ -413,6 +414,24 @@ def get_habitat_data(es_id):
 	habitat_es = PAK_DATA['EnemySet'].get(es_id, {})
 	return habitat_es
 
+
+def get_recursive_location(properties, idx_map):
+	relative_location = properties['RelativeLocation']
+	if not relative_location:
+		relative_location = {
+			'X': 0,
+			'Y': 0,
+			'Z': 0,
+		}
+	if 'AttachParent' in properties:
+		p_id = properties['AttachParent']['ObjectPath'].split(".")[-1]
+		if int(p_id) in idx_map:
+			p_obj = idx_map[int(p_id)]
+			p_relative_location = get_recursive_location(p_obj['Properties'], idx_map)
+			relative_location['X'] += p_relative_location['X']
+			relative_location['Y'] += p_relative_location['Y']
+			relative_location['Z'] += p_relative_location['Z']
+	return relative_location
 
 def get_positions(category, entry_type, file):
 	with codecs.open(file, 'r', 'utf8') as f:
@@ -453,7 +472,8 @@ def get_positions(category, entry_type, file):
 		}
 		if int(root_id) in idx_map:
 			pos = idx_map[int(root_id)]
-			result["RelativeLocation"] = pos["Properties"]["RelativeLocation"]
+			# result["RelativeLocation"] = pos["Properties"]["RelativeLocation"]
+			result["RelativeLocation"] = get_recursive_location(pos["Properties"], idx_map)
 		results.append(result)
 	return results
 
@@ -609,6 +629,10 @@ def analysis_bgconfig_file(file):
 
 
 if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--skip-trans', type=str, help='Skip Translation')
+	args = parser.parse_args()
+
 	load_apiext_texts()
 	load_pak_texts()
 	load_pak_datas()
