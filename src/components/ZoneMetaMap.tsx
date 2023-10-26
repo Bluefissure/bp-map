@@ -5,7 +5,7 @@ import mapFld001 from '../assets/map/Fld001/UI_MapFld001.webp';
 import mapFld002 from '../assets/map/fld002/UI_MapFld002.webp';
 import mapFld003 from '../assets/map/fld003/UI_Map_Fld003.webp';
 import mapFld004 from '../assets/map/fld004/UI_Map_Fld004.webp';
-import mapFld005 from '../assets/map/fld005/UI_Map_Fld005.webp';
+import mapFld005 from '../assets/map/fld005/UI_Map_fld005.webp';
 import mapDng004 from '../assets/map/dng004/UI_Mapdng004.webp';
 import mapDng007 from '../assets/map/dng007/UI_Mapdng007.webp';
 import mapDng009 from '../assets/map/dng009/UI_Mapdng009.webp';
