@@ -122,27 +122,54 @@ import TreasureABIcon140047000 from '../assets/icon/Adventureboard/UI_Adventureb
 import TreasureABIcon140052000 from '../assets/icon/Adventureboard/UI_Adventureboard_140052000.webp';
 import TreasureABIcon140054000 from '../assets/icon/Adventureboard/UI_Adventureboard_140054000.webp';
 import TreasureABIcon140056000 from '../assets/icon/Adventureboard/UI_Adventureboard_140056000.webp';
+// 149958000 
 import TreasureABIcon140058000 from '../assets/icon/Adventureboard/UI_Adventureboard_140058000.webp';
+// 149959000 
 import TreasureABIcon140059000 from '../assets/icon/Adventureboard/UI_Adventureboard_140059000.webp';
+// 149962000 
+import TreasureABIcon140062000 from '../assets/icon/Adventureboard/UI_Adventureboard_140062000.webp';
+// 149964000 
+import TreasureABIcon140064000 from '../assets/icon/Adventureboard/UI_Adventureboard_140064000.webp';
+// 149967000 
+import TreasureABIcon140067000 from '../assets/icon/Adventureboard/UI_Adventureboard_140067000.webp';
+// 149968000 
+import TreasureABIcon140068000 from '../assets/icon/Adventureboard/UI_Adventureboard_140068000.webp';
+// 140074000
+import TreasureABIcon140074000 from '../assets/icon/Adventureboard/UI_Adventureboard_140074000.webp';
+// 140075000
+import TreasureABIcon140075000 from '../assets/icon/Adventureboard/UI_Adventureboard_140075000.webp';
+// 140076000
+import TreasureABIcon140076000 from '../assets/icon/Adventureboard/UI_Adventureboard_140076000.webp';
+// 140077000
+import TreasureABIcon140077000 from '../assets/icon/Adventureboard/UI_Adventureboard_140077000.webp';
+
 import TreasureABIconNoData from '../assets/icon/Adventureboard/UI_Adventureboard_NoData.webp';
 
 const ABIcons = {
-    "140048000": TreasureABIcon140048000,
-    "140050000": TreasureABIcon140050000,
-    "140042000": TreasureABIcon140042000,
-    "140044000": TreasureABIcon140044000,
-    "140038000": TreasureABIcon140038000,
-    "140040000": TreasureABIcon140040000,
-    "140035000": TreasureABIcon140035000,
-    "140036000": TreasureABIcon140036000,
-    "140043000": TreasureABIcon140043000,
-    "140045000": TreasureABIcon140045000,
-    "140047000": TreasureABIcon140047000,
-    "140052000": TreasureABIcon140052000,
-    "140054000": TreasureABIcon140054000,
-    "140056000": TreasureABIcon140056000,
-    "140058000": TreasureABIcon140058000,
-    "140059000": TreasureABIcon140059000,
+    "149948000": TreasureABIcon140048000,
+    "149950000": TreasureABIcon140050000,
+    "149942000": TreasureABIcon140042000,
+    "149944000": TreasureABIcon140044000,
+    "149938000": TreasureABIcon140038000,
+    "149940000": TreasureABIcon140040000,
+    "149935000": TreasureABIcon140035000,
+    "149936000": TreasureABIcon140036000,
+    "149943000": TreasureABIcon140043000,
+    "149945000": TreasureABIcon140045000,
+    "149947000": TreasureABIcon140047000,
+    "149952000": TreasureABIcon140052000,
+    "149954000": TreasureABIcon140054000,
+    "149956000": TreasureABIcon140056000,
+    "149958000": TreasureABIcon140058000,
+    "149959000": TreasureABIcon140059000,
+    "149962000": TreasureABIcon140062000,
+    "149964000": TreasureABIcon140064000,
+    "149967000": TreasureABIcon140067000,
+    "149968000": TreasureABIcon140068000,
+    "140074000": TreasureABIcon140074000,
+    "140075000": TreasureABIcon140075000,
+    "140076000": TreasureABIcon140076000,
+    "140077000": TreasureABIcon140077000,
     "_": TreasureABIconNoData,
 };
 

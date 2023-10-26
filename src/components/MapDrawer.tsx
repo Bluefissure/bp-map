@@ -44,6 +44,7 @@ import AreaFld01 from '../assets/area/UI_MapArea_Fld01.webp';
 import AreaFld02 from '../assets/area/UI_MapArea_Fld02.webp';
 import AreaFld03 from '../assets/area/UI_MapArea_Fld03.webp';
 import AreaFld04 from '../assets/area/UI_MapArea_Fld04.webp';
+import AreaFld005 from '../assets/area/UI_MapArea_Fld005.webp';
 import { useStateWithLS } from '../customHooks/useStateWithLS';
 import { getLocalText } from './MapContainer';
 
@@ -192,19 +193,24 @@ export const MapDrawer = (props: MapDrawerProps) => {
 
     // Generate map selector
     const cityAreas = [AreaCty01, AreaCty02];
-    const fieldAreas = [AreaFld01, AreaFld02, AreaFld03, AreaFld04];
+    const fieldAreas = [AreaFld01, AreaFld02, AreaFld03, AreaFld04, AreaFld005];
     const cityZoneIds = ['cty001', 'cty002'];
-    const fieldZoneIds = ['fld001', 'fld002', 'fld003', 'fld004'];
+    const fieldZoneIds = ['fld001', 'fld002', 'fld003', 'fld004', 'fld005'];
     const dungeonZoneIds = [
         'dng004',
         'dng007',
         'dng009',
+        'dng015',
+        'pat0102',
         'pat0201',
+        // 'pat0202',
         'pat0801',
         'pat0802',
         'pat0803',
-        // 'pat0804',
+        'pat0804',
+        'pat0805',
         'pat0901',
+        // 'pat0902',
     ];
     // Generate marker selector
     const markerTypes = props.markerTypeDim?.group().all().map((kv) => (kv.key as string)) ?? [];
